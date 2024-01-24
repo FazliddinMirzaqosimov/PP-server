@@ -1,18 +1,23 @@
 const express = require("express");
 const UserControllers = require("../controllers/userController");
 const AuthControllers = require("../controllers/authController");
+const { routeProtector } = require("../middlewares/routeProtector");
 
 const userRouter = express.Router();
 
 userRouter
   .route("/")
-  .get(AuthControllers.routeProtector,UserControllers.getAll)
-  .post(AuthControllers.routeProtector, UserControllers.create);
+  .get(routeProtector, UserControllers.getAll)
+  .post(routeProtector, UserControllers.create);
+  
+  userRouter
+  .route("/balance")
+  .get(routeProtector, UserControllers.getBalance)
 
-userRouter
+  userRouter
   .route("/:id")
-  .delete(AuthControllers.routeProtector, UserControllers.delete)
-  .patch(AuthControllers.routeProtector, UserControllers.edit) 
-  .get(AuthControllers.routeProtector, UserControllers.get)
+  .delete(routeProtector, UserControllers.delete)
+  .patch(routeProtector, UserControllers.edit)
+  .get(routeProtector, UserControllers.get);
 
 module.exports = userRouter;

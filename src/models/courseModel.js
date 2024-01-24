@@ -9,14 +9,17 @@ const courseSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    image: {
+    chat: {
       type: String,
-      // Mawini File id qilip qoyw kere
+      required: [true, "Chat is required"],
+    },
+    image: {
+      type: { type: mongoose.Schema.Types.ObjectId, ref: "File" },
     },
     userId: {
-      type: String,
       required: [true, "User id is required"],
-      // Mawini User id qilip qoyw kere
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {

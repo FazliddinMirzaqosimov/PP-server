@@ -1,18 +1,19 @@
 const express = require("express");
-const UserControllers = require("../controllers/userController");
+const CourseControllers = require("../controllers/courseController");
 const AuthControllers = require("../controllers/authController");
+const { routeProtector } = require("../middlewares/routeProtector");
 
 const courseRouter = express.Router();
 
 courseRouter
   .route("/")
-  .get(AuthControllers.routeProtector,UserControllers.getAll)
-  .post(AuthControllers.routeProtector, UserControllers.create);
+  .get(CourseControllers.getAll)
+  .post(routeProtector, CourseControllers.create);
 
 courseRouter
   .route("/:id")
-  .delete(AuthControllers.routeProtector, UserControllers.delete)
-  .patch(AuthControllers.routeProtector, UserControllers.edit) 
-  .get(AuthControllers.routeProtector, UserControllers.get)
+  .delete(routeProtector, CourseControllers.delete)
+  .patch(routeProtector, CourseControllers.edit)
+  .get(CourseControllers.get);
 
 module.exports = courseRouter;

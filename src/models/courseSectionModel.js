@@ -10,18 +10,18 @@ const courseSectionSchema = new mongoose.Schema(
       type: String,
     },
     image: {
-      type: String,
-      // Mawini object id qilip qoyw kere
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "File",
     },
     userId: {
-      type: String,
       required: [true, "User id is required"],
-      // Mawini object id qilip qoyw kere
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     courseId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
       required: [true, "Course id is required"],
-      // Mawini object id qilip qoyw kere
     },
   },
   {

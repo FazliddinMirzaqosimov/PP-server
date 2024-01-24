@@ -1,10 +1,10 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, Mongoose } = require("mongoose");
 
 const videoSchema = new mongoose.Schema(
   {
     videoId: {
       type: String,
-      required: [true, "video is required"],
+      required: [true, "Video is required"],
     },
     title: {
       type: String,
@@ -12,6 +12,11 @@ const videoSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+    },
+    courseSectionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CourseSection",
+      required: [true, "Course section id is required"],
     },
   },
   {
