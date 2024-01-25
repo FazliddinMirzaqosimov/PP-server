@@ -1,5 +1,4 @@
 const { default: mongoose } = require("mongoose");
- 
 
 const prurchaseSchema = new mongoose.Schema(
   {
@@ -11,10 +10,19 @@ const prurchaseSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: [true, "Amount is required"],
+      validate: {
+        validator: (value) => value >= 0,
+        message: "Amount must be positive",
+      },
+    },
+    planId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan",
+      required: [true, "Plan is required"],
     },
   },
   {
-    timestamps: { createdAt: "createdAt" },
+    timestamps: { createdAt: "createdAt",updatedAt: "updatedAt" },
   }
 );
 

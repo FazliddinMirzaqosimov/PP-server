@@ -7,6 +7,7 @@ const courseRouter = require("./routers/courseRouter");
 const courseSectionRouter = require("./routers/courseSectionRouter");
 const videoRouter = require("./routers/videoRouter");
 const purchaseRouter = require("./routers/purchaseRouter");
+const planRouter = require("./routers/planRouter");
 
 const app = express();
 
@@ -24,5 +25,7 @@ app.use("/api/v1/course", courseRouter);
 app.use("/api/v1/course-section", courseSectionRouter);
 app.use("/api/v1/video", videoRouter);
 app.use("/api/v1/purchase", purchaseRouter);
+app.use("/api/v1/plan", planRouter);
+
 
 module.exports = app;

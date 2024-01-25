@@ -18,9 +18,10 @@ class APIFeatures {
       return this;
     }
   
-    sort() {
-      if (this.queryString.sort) {
-        const sortBy = this.queryString.sort.split(",").join(" ");
+    sort(sortField) {
+      const sorter = this.queryString.sort || sortField
+      if (sorter) {
+        const sortBy = sorter.split(",").join(" ");
         this.query = this.query.sort(sortBy);
       } else {
         this.query = this.query.sort("-createdAt");

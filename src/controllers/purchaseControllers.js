@@ -2,6 +2,8 @@ const { sendError, sendSucces } = require("../utils/senData");
 const { passwordValidator } = require("../utils/validators/passwordValidator");
 const APIFeatures = require("../utils/apiFeatures");
 const Purchase = require("../models/purchaseModel");
+const Plan = require("../models/planModel");
+const User = require("../models/userModel");
 
 class PurchaseControllers {
   // Get all purchase list
@@ -34,12 +36,56 @@ class PurchaseControllers {
   // Create purchase section list
   static create = async (req, res) => {
     try {
-      const { userId, amount } = req.body;
+      const { email, amount, planId } = req.body;
+
+      if (amount <= 0) {
+        return sendError(res, {
+          error: "Amount should be more than 0!",
+          status: 404,
+        });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return sendError(res, {
+          error: `Cannot find user with this email: ${email}!`,
+          status: 404,
+        });
+      }  if (user.role !== "user") {
+        return sendError(res, {
+          error: "You can purchase only to users!",
+          status: 404,
+        });
+      }
+
+      const plan = await Plan.findById(planId);
+      if (!plan) {
+        return sendError(res, { error: "Plan not found!", status: 404 });
+      }
+      const latestPurchase = await Purchase.findOne({ userId: user._id })
+        .sort({ createdAt: -1 })
+        .populate("planId");
+
+      if (latestPurchase) {
+        const latestPlanDuration =
+          latestPurchase.planId.duration * 24 * 60 * 60 * 1000;
+        const latestPlanStartDate = latestPurchase.createdAt.getTime();
+        const currentTime = new Date().getTime();
+        const expiresIn = new Date(latestPlanStartDate + latestPlanDuration);
+
+        if (expiresIn.getTime() > currentTime) {
+          return sendError(res, {
+            error: `Users' current plan will expire in "${expiresIn}" !`,
+            status: 404,
+          });
+        }
+      }
 
       const purchase = await Purchase.create({
-        userId,
+        userId: user._id,
         amount,
+        planId,
       });
+
       sendSucces(res, { data: { purchase }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -75,13 +121,14 @@ class PurchaseControllers {
     try {
       const id = req.params.id;
 
-      const { userId, amount } = req.body;
+      const { userId, amount, planId } = req.body;
 
       const purchase = await Purchase.findByIdAndUpdate(
         id,
         {
           userId,
           amount,
+          planId,
         },
         { new: true, runValidators: true }
       );
