@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
       select: false,
       required: [true, "Password is required"],
     },
+    verifiedAt: {
+      type: Date,
+    },
+    verificationCode: { type: String },
     passwordChangedAt: { type: Date, select: false },
   },
   {
