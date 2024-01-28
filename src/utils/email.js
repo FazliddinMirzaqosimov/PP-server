@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const { EMAIL_USERNAME, EMAIL_PASSWORD } = require("../shared/const");
 
 function sendMail(options) {
   const transporter = nodemailer.createTransport({
@@ -6,8 +7,8 @@ function sendMail(options) {
     host: "smtp.gmail.com",
     port: "587",
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
+      user:  EMAIL_USERNAME,
+      pass:  EMAIL_PASSWORD,
     },
   });
 
@@ -21,7 +22,7 @@ function sendRegisterEmail(link, to) {
     subject: "Dunyoni zabt qilish vaqti keldi!",
     html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
     <br/>
-    <br/>"${link}"
+    <br/> 
     <a href="${link}">
 
     <button
