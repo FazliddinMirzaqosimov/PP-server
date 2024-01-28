@@ -58,7 +58,19 @@ class AuthControllers {
         });
       }
       const user = await User.findOne({ email }).select("+password");
+      if (!user.verifiedAt) {
+        return sendError(res, {
+          error: "You are not verified!",
+          status: 404,
+        });
+      }
 
+      if (!user) {
+        return sendError(res, {
+          error: "Email not found",
+          status: 404,
+        });
+      }
       if (!(await user.comparePasswords(password))) {
         return sendError(res, {
           error: "Wrong password or email",
@@ -85,7 +97,7 @@ class AuthControllers {
           status: 404,
         });
       }
-       if (user.verifiedAt) {
+      if (user.verifiedAt) {
         return sendError(res, {
           error: "Your email already verified!",
           type: "send",
