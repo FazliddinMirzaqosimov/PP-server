@@ -7,12 +7,12 @@ const purchaseRouter = express.Router();
 purchaseRouter
   .route("/")
   .get(routeProtector, PurchaseControllers.getAll)
-  .post(routeProtector, PurchaseControllers.create);
+  .post(routeProtector,allowTo("admin","superadmin"), PurchaseControllers.create);
 
   purchaseRouter
   .route("/:id")
-  .delete(routeProtector, PurchaseControllers.delete)
-  .patch(routeProtector, PurchaseControllers.edit)
+  .delete(routeProtector,allowTo("admin","superadmin"), PurchaseControllers.delete)
+  .patch(routeProtector,allowTo("admin","superadmin"), PurchaseControllers.edit)
   .get(routeProtector, PurchaseControllers.get);
 
 module.exports = purchaseRouter;

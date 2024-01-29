@@ -7,17 +7,17 @@ const userRouter = express.Router();
 
 userRouter
   .route("/")
-  .get(routeProtector, UserControllers.getAll)
-  .post(routeProtector, UserControllers.create);
+  .get(routeProtector,allowTo("superadmin"), UserControllers.getAll)
+  .post(routeProtector,allowTo( "superadmin"), UserControllers.create);
   
   userRouter
   .route("/balance")
-  .get(routeProtector, UserControllers.getBalance)
+  .get(routeProtector,allowTo( "superadmin"),  UserControllers.getBalance)
 
   userRouter
   .route("/:id")
-  .delete(routeProtector, UserControllers.delete)
-  .patch(routeProtector, UserControllers.edit)
-  .get(routeProtector, UserControllers.get);
+  .delete(routeProtector,allowTo( "superadmin"), UserControllers.delete)
+  .patch(routeProtector,allowTo( "superadmin"), UserControllers.edit)
+  .get(routeProtector,allowTo( "superadmin"), UserControllers.get);
 
 module.exports = userRouter;
