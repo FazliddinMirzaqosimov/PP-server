@@ -1,6 +1,7 @@
 const express = require("express");
  const PurchaseControllers = require("../controllers/purchaseControllers");
 const { routeProtector } = require("../middlewares/routeProtector");
+const { allowTo } = require("../middlewares/roleFilter");
 
 const purchaseRouter = express.Router();
 

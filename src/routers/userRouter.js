@@ -2,6 +2,7 @@ const express = require("express");
 const UserControllers = require("../controllers/userController");
 const AuthControllers = require("../controllers/authController");
 const { routeProtector } = require("../middlewares/routeProtector");
+const { allowTo } = require("../middlewares/roleFilter");
 
 const userRouter = express.Router();
 
