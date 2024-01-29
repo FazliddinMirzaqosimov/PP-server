@@ -15,10 +15,10 @@ const app = express();
  
 app.get("/", (req, res) => {
   res.send("hello");
-});
+}); 
 
-app.use(express.json());
 app.use(cors(corsOptions));
+app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);

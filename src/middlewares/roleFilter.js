@@ -1,3 +1,5 @@
+const { sendError } = require("../utils/senData");
+
 exports.allowTo =
   (...roles) =>
   (req, res) => {

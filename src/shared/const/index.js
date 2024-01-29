@@ -8,6 +8,7 @@ exports.EMAIL_USERNAME = process.env.EMAIL_USERNAME;
 exports.EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 exports.PROJECT_ID = process.env.PROJECT_ID;
 exports.API_URL = process.env.API_URL;
+exports.APP_URL = process.env.APP_URL;
 exports.DB = this.DATABASE.replace("<password>", this.DATABASE_PASSWORD);
 
  

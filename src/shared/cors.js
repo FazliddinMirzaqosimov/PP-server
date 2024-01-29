@@ -1,19 +1,16 @@
-const allowedOrigins = [
-    "http://localhost:3000",
-    "https://app.fazliddin.dev",
-  ];
-  
-  const corsOptions = {
-    origin: (origin, callback) => {
-      console.log({origin, callback});
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-  };
-  
+const {  APP_URL } = require("./const");
 
+const allowedOrigins = [  APP_URL];
 
-  exports.default = corsOptions
+const corsOptions = {
+  origin: (origin, callback) => {
+    console.log({ origin, callback });
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback( `"${origin}" is not allowed by CORS`) ;
+    } 
+  },
+};
+
+module.exports = corsOptions;
