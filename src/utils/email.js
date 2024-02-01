@@ -7,20 +7,20 @@ function sendMail(options) {
     host: "smtp.gmail.com",
     port: "587",
     auth: {
-      user:  EMAIL_USERNAME,
-      pass:  EMAIL_PASSWORD,
+      user: EMAIL_USERNAME,
+      pass: EMAIL_PASSWORD,
     },
   });
 
   return transporter.sendMail(options);
 }
 
-function sendRegisterEmail(link, to) {
+exports.sendRegisterEmail = (link, to) => {
   const options = {
     from: '"fazliddin.dev Platformasi" <foo@example.com>',
     to: to,
     subject: "Dunyoni zabt qilish vaqti keldi!",
-    html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
+    html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
     <br/>
     <br/> 
     <a href="${link}">
@@ -52,17 +52,65 @@ function sendRegisterEmail(link, to) {
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> hamjamiyatiga xush kelibsiz!
+    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasiga xush kelibsiz!
     <br/>
     <br/>
 
     Eng yaxshi ezgu tilaklar bilan,
     <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasi`,
   };
- return  sendMail(options);
-}
+  return sendMail(options);
+};
 
-// sendRegisterEmail("https://login.com", "nextech.uz@gmail.com");
+exports.sendUpdateEmailCode = (code, to) => {
+  const options = {
+    from: '"fazliddin.dev Platformasi" <foo@example.com>',
+    to: to,
+    subject: "Emailingizni o'zgartirish kodi!",
+    html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
+    <br/>
+    <br/> 
+    <div style="padding: 30px; text-align: center">
+    <p
+      style="
+        font-family: sans-serif;
+        letter-spacing: 5px;
+        font-size: 20px;
+        color: #202020;
+        background-color: #e0e0e0;
+        display: inline;
+        padding: 5px 15px;
+        border-radius: 5px;
+      "
+    >
+      ${code}
+    </p>
+  </div>
 
- exports.sendRegisterEmail = sendRegisterEmail;
+
+  <br/>
+  <br/>
+
+    Bu link sizga <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> platformasida emailingizni yangilash uchun jo'natildi. Agar emailingizni o'zgartirish niyyatingiz bo'lmasa xabarimizga ahamiyat bermang!
+    <br/>
+    <br/>
+
+    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
+    <br/>
+    <br/>
+
+    Agar sizda biron bir savol bo'lsa yoki yordamga muhtoj bo'lsangiz, bizning qo'llab-quvvatlash guruhimizga fazliddinmirzaqosimov8@gmail.com manzili orqali murojaat qiling.
+    <br/>
+    <br/>
+
+    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>  jamoasiga xush kelibsiz!
+    <br/>
+    <br/>
+
+    Eng yaxshi ezgu tilaklar bilan,
+    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasi`,
+  };
+  return sendMail(options);
+};
+
 exports.sendMail = sendMail;

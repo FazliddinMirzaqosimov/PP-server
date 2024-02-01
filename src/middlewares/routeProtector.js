@@ -18,15 +18,15 @@ exports.routeProtector = async (req, res, next) => {
       return sendError(res, { error: "You are not logged in", status: 401 });
     }
 
-     const { email, password } = await util.promisify(jwt.verify)(
+     const { id } = await util.promisify(jwt.verify)(
       token,
       JWT_SECRET
     );
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findById(id) ;
 
     if (!user) {
-      return sendError(res, { error: "Wrong email", status: 404 });
+      return sendError(res, { error: "User not found", status: 404 });
     }
     if (!user.verifiedAt) {
       return sendError(res, {
@@ -34,9 +34,7 @@ exports.routeProtector = async (req, res, next) => {
         status: 404,
       });
     }
-    if (!(await user.comparePasswords(password))) {
-      return sendError(res, { error: "Wrong password  ", status: 404 });
-    }
+    
     req.user = user;
 
     next();

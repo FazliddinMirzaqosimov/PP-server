@@ -15,5 +15,5 @@ exports.getUserBalance = async (userId) => {
     },
   ]);
 
-  return balance?.[0]?.balance || 0 ;
+  return balance?.[0]?.balance || 0;
 };

@@ -5,6 +5,9 @@ const { ROLES } = require("../shared/const");
 
 const userSchema = new mongoose.Schema(
   {
+    fullName: {
+      type: String,
+    },
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -31,6 +34,8 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
     verificationCode: { type: String },
+    newEmailCode: { type: String },
+    newEmail: { type: String },
     passwordChangedAt: { type: Date, select: false },
     startedCourses: {
       type: [
@@ -55,8 +60,7 @@ userSchema.pre("save", async function (next) {
     this.passwordChangedAt = new Date();
     return next();
   }
-  console.log(this);
-
+ 
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });

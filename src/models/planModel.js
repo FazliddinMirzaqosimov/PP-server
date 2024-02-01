@@ -9,6 +9,10 @@ const planSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    advantages: {
+      type: [String],
+      default: [],
+    },
 
     image: {
       type: { type: mongoose.Schema.Types.ObjectId, ref: "File" },

@@ -9,7 +9,10 @@ class PurchaseControllers {
   // Get all purchase list
   static getAll = async (req, res) => {
     try {
-      const purchasesQuery = new APIFeatures(Purchase.find(), req.query)
+      const purchasesQuery = new APIFeatures(
+        Purchase.find({userId:req.user._id}),
+        req.query
+      )
         .sort()
         .filter()
         .paginate()
@@ -35,7 +38,7 @@ class PurchaseControllers {
 
   // Create purchase section list
   static create = async (req, res) => {
-     try {
+    try {
       const { email, amount } = req.body;
 
       if (amount <= 0) {
@@ -52,8 +55,6 @@ class PurchaseControllers {
           status: 404,
         });
       }
-
-     
 
       const purchase = await Purchase.create({
         userId: user._id,
@@ -73,6 +74,18 @@ class PurchaseControllers {
 
       const purchase = await Purchase.findById(id);
       sendSucces(res, { status: 200, data: { purchase } });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  // Get purchase section list
+  static getPurchaseHistory = async (req, res) => {
+    try {
+      const id = req.user._id;
+
+      const purchases = await Purchase.find({userId:id}).sort({createdAt:-1});
+      sendSucces(res, { status: 200, data: { purchases  } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }

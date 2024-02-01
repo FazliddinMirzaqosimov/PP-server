@@ -10,8 +10,7 @@ const { getUserBalance } = require("../utils/getBalance");
 class UserControllers {
   // Get all user list
   static getAll = async (req, res) => {
-    console.log(111);
-    try {
+     try {
       const usersQuery = new APIFeatures(User.find(), req.query)
         .sort()
         .filter()
@@ -56,11 +55,29 @@ class UserControllers {
     try {
       const id = req.params.id;
 
-      const { email, role } = req.body;
+      const { fullName,role } = req.body;
 
       const user = await User.findByIdAndUpdate(
         id,
-        { email, role },
+        { fullName,role },
+        { new: true, runValidators: true }
+      );
+
+      sendSucces(res, { data: { user }, status: 200 });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  }; // Edit profile
+
+  static editProfile = async (req, res) => {
+    try {
+      const id = req.user._id;
+
+      const { fullName } = req.body;
+
+      const user = await User.findByIdAndUpdate(
+        id,
+        { fullName },
         { new: true, runValidators: true }
       );
 
@@ -89,6 +106,32 @@ class UserControllers {
 
       const user = await User.findById(id);
       sendSucces(res, { status: 200, data: { user } });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  //get profile of user
+  static getProfile = async (req, res) => {
+    try {
+      const user = req.user;
+      const balance = await getUserBalance(user._id);
+      const lastPurchase = await Purchase.findOne({
+        userId: user._id,
+        amount: { $gt: 0 },
+      }).sort({ createdAt: -1 });
+      sendSucces(res, {
+        status: 200,
+        data: {
+          user: {
+            email: user.email,
+            role: user.role,
+            verifiedAt: user.verifiedAt,
+          },
+          balance,
+          lastPurchase,
+        },
+      });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
@@ -149,7 +192,6 @@ class UserControllers {
           });
         }
       }
-      console.log(plan);
 
       const purchase = await Purchase.create({
         userId: user._id,
