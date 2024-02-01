@@ -3,10 +3,14 @@ const { sendError, sendSucces } = require("../utils/senData");
 const { passwordValidator } = require("../utils/validators/passwordValidator");
 const APIFeatures = require("../utils/apiFeatures");
 const Purchase = require("../models/purchaseModel");
+const Course = require("../models/courseModel");
+const Plan = require("../models/planModel");
+const { getUserBalance } = require("../utils/getBalance");
 
 class UserControllers {
   // Get all user list
   static getAll = async (req, res) => {
+    console.log(111);
     try {
       const usersQuery = new APIFeatures(User.find(), req.query)
         .sort()
@@ -90,25 +94,140 @@ class UserControllers {
     }
   };
 
+  //get balance of profile
   static getBalance = async (req, res) => {
     try {
       const userId = req.user._id;
-      const balance = await Purchase.aggregate([
-        {
-          $match: {
-            userId: userId,
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            balance: { $sum: "$amount" },
-          },
-        },
-      ]);
-      
- 
-      sendSucces(res, { status: 200, data: { balance } });
+      const balance = await getUserBalance(userId);
+      sendSucces(res, {
+        status: 200,
+        data: { balance },
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  // buy new plan
+  static buyPlan = async (req, res) => {
+    try {
+      const planId = req.query.planId;
+      const user = req.user;
+
+      const plan = await Plan.findById(planId);
+      if (!plan) {
+        return sendError(res, { error: "Plan not found!", status: 404 });
+      }
+
+      const balance = await getUserBalance(user._id);
+
+      if (balance < plan.price) {
+        return sendError(res, {
+          error: "Your balance is insufficient!",
+          status: 404,
+        });
+      }
+
+      const latestPurchase = await Purchase.findOne({
+        userId: user._id,
+        amount: { $lt: 0 },
+      })
+        .sort({ createdAt: -1 })
+        .populate("planId");
+
+      if (latestPurchase) {
+        const latestPlanDuration =
+          latestPurchase.planId.duration * 24 * 60 * 60 * 1000;
+        const latestPlanStartDate = latestPurchase.createdAt.getTime();
+        const currentTime = new Date().getTime();
+        const expiresIn = new Date(latestPlanStartDate + latestPlanDuration);
+
+        if (expiresIn.getTime() > currentTime) {
+          return sendError(res, {
+            error: `Users' current plan will expire in "${expiresIn}" !`,
+            status: 404,
+          });
+        }
+      }
+      console.log(plan);
+
+      const purchase = await Purchase.create({
+        userId: user._id,
+        amount: -plan.price,
+        planTitle: plan.title,
+        planDuration: plan.duration,
+        planId: plan._id,
+      });
+
+      sendSucces(res, {
+        data: { user, plan, latestPurchase, purchase },
+        status: 200,
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  // add course to user
+  static addCourse = async (req, res) => {
+    try {
+      const courseId = req.query.courseId;
+
+      if (!courseId) {
+        return sendError(res, {
+          error: "courseId query not found!",
+          status: 404,
+        });
+      }
+
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return sendError(res, { error: "Course not found!", status: 404 });
+      }
+      if (req.user.startedCourses.includes(course._id)) {
+        return sendError(res, {
+          error: "You already have this course!",
+          status: 404,
+        });
+      }
+
+      await req.user.updateOne(
+        { $push: { startedCourses: courseId } },
+        { new: true }
+      );
+
+      sendSucces(res, { data: "Course successfully added!", status: 200 });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  // remove course to user
+  static removeCourse = async (req, res) => {
+    try {
+      const courseId = req.query.courseId;
+
+      if (!courseId) {
+        return sendError(res, {
+          error: "courseId query not found!",
+          status: 404,
+        });
+      }
+
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return sendError(res, { error: "Course not found!", status: 404 });
+      }
+      if (!req.user.startedCourses.includes(course._id)) {
+        return sendError(res, {
+          error: "You dont have this course!",
+          status: 404,
+        });
+      }
+
+      await req.user.updateOne({ $pull: { startedCourses: courseId } });
+
+      sendSucces(res, { data: "Course successfully removed", status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }

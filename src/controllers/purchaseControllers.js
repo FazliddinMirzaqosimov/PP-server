@@ -35,8 +35,8 @@ class PurchaseControllers {
 
   // Create purchase section list
   static create = async (req, res) => {
-    try {
-      const { email, amount, planId } = req.body;
+     try {
+      const { email, amount } = req.body;
 
       if (amount <= 0) {
         return sendError(res, {
@@ -44,46 +44,20 @@ class PurchaseControllers {
           status: 404,
         });
       }
+
       const user = await User.findOne({ email });
       if (!user) {
         return sendError(res, {
           error: `Cannot find user with this email: ${email}!`,
           status: 404,
         });
-      }  if (user.role !== "user") {
-        return sendError(res, {
-          error: "You can purchase only to users!",
-          status: 404,
-        });
       }
 
-      const plan = await Plan.findById(planId);
-      if (!plan) {
-        return sendError(res, { error: "Plan not found!", status: 404 });
-      }
-      const latestPurchase = await Purchase.findOne({ userId: user._id })
-        .sort({ createdAt: -1 })
-        .populate("planId");
-
-      if (latestPurchase) {
-        const latestPlanDuration =
-          latestPurchase.planId.duration * 24 * 60 * 60 * 1000;
-        const latestPlanStartDate = latestPurchase.createdAt.getTime();
-        const currentTime = new Date().getTime();
-        const expiresIn = new Date(latestPlanStartDate + latestPlanDuration);
-
-        if (expiresIn.getTime() > currentTime) {
-          return sendError(res, {
-            error: `Users' current plan will expire in "${expiresIn}" !`,
-            status: 404,
-          });
-        }
-      }
+     
 
       const purchase = await Purchase.create({
         userId: user._id,
         amount,
-        planId,
       });
 
       sendSucces(res, { data: { purchase }, status: 200 });

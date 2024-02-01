@@ -32,6 +32,15 @@ const userSchema = new mongoose.Schema(
     },
     verificationCode: { type: String },
     passwordChangedAt: { type: Date, select: false },
+    startedCourses: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+        },
+      ],
+      default: [],
+    },
   },
   {
     timestamps: {

@@ -8,17 +8,27 @@ const userRouter = express.Router();
 
 userRouter
   .route("/")
-  .get(routeProtector,allowTo("superadmin"), UserControllers.getAll)
-  .post(routeProtector,allowTo( "superadmin"), UserControllers.create);
-  
-  userRouter
-  .route("/balance")
-  .get(routeProtector,allowTo( "superadmin"),  UserControllers.getBalance)
+  .get(routeProtector, allowTo("superadmin"), UserControllers.getAll)
+  .post(routeProtector, allowTo("superadmin"), UserControllers.create);
 
-  userRouter
+userRouter
+  .route("/balance")
+  .get(routeProtector, allowTo("superadmin"), UserControllers.getBalance);
+
+userRouter
+  .route("/add-course")
+  .patch(routeProtector, UserControllers.addCourse);
+
+userRouter.route("/buy-plan").post(routeProtector, UserControllers.buyPlan);
+
+userRouter
+  .route("/remove-course")
+  .delete(routeProtector, UserControllers.removeCourse);
+
+userRouter
   .route("/:id")
-  .delete(routeProtector,allowTo( "superadmin"), UserControllers.delete)
-  .patch(routeProtector,allowTo( "superadmin"), UserControllers.edit)
-  .get(routeProtector,allowTo( "superadmin"), UserControllers.get);
+  .delete(routeProtector, allowTo("superadmin"), UserControllers.delete)
+  .patch(routeProtector, allowTo("superadmin"), UserControllers.edit)
+  .get(routeProtector, allowTo("superadmin"), UserControllers.get);
 
 module.exports = userRouter;

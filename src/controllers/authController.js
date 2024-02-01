@@ -22,7 +22,7 @@ class AuthControllers {
 
       let user = await User.findOne({ email });
 
-      if (user && user?.verifiedAt) {
+      if (user?.verifiedAt) {
         return sendSucces(res, {
           data: "Email already verified!",
           status: 200,
@@ -35,7 +35,9 @@ class AuthControllers {
 
       user.verificationCode = uuidv4();
       await user.save();
-
+      console.log(
+        `${API_URL}/api/v1/auth/email-verification?code=${user.verificationCode}&id=${user._id}`
+      );
       await sendRegisterEmail(
         `${API_URL}/api/v1/auth/email-verification?code=${user.verificationCode}&id=${user._id}`,
         email
@@ -45,7 +47,7 @@ class AuthControllers {
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
-  };
+  }; 
 
   static login = async (req, res) => {
     try {
@@ -58,7 +60,8 @@ class AuthControllers {
         });
       }
       const user = await User.findOne({ email }).select("+password");
-      if (!user.verifiedAt) {
+
+      if (!user?.verifiedAt) {
         return sendError(res, {
           error: "You are not verified!",
           status: 404,

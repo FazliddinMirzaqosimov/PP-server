@@ -2,7 +2,7 @@ const { sendError } = require("../utils/senData");
 
 exports.allowTo =
   (...roles) =>
-  (req, res) => {
+  (req, res,next  ) => {
     try {
       if (!roles.includes(req.user.role)) {
         return sendError(res, {
@@ -13,13 +13,13 @@ exports.allowTo =
 
       next();
     } catch (error) {
-      sendError(res, { error, status: 404 });
+      sendError(res, { error:error.message, status: 404 });
     }
   };
 
 exports.rejectTo =
   (...roles) =>
-  (req, res) => {
+  (req, res, next) => {
     try {
       if (roles.includes(req.user.role)) {
         return sendError(res, {

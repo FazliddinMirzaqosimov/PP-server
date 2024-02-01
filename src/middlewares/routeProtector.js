@@ -18,7 +18,7 @@ exports.routeProtector = async (req, res, next) => {
       return sendError(res, { error: "You are not logged in", status: 401 });
     }
 
-    const { email, password } = await util.promisify(jwt.verify)(
+     const { email, password } = await util.promisify(jwt.verify)(
       token,
       JWT_SECRET
     );
@@ -28,6 +28,12 @@ exports.routeProtector = async (req, res, next) => {
     if (!user) {
       return sendError(res, { error: "Wrong email", status: 404 });
     }
+    if (!user.verifiedAt) {
+      return sendError(res, {
+        error: "You are not verified!",
+        status: 404,
+      });
+    }
     if (!(await user.comparePasswords(password))) {
       return sendError(res, { error: "Wrong password  ", status: 404 });
     }
@@ -35,6 +41,6 @@ exports.routeProtector = async (req, res, next) => {
 
     next();
   } catch (error) {
-    sendError(res, { error, status: 404 });
+    sendError(res, { error: error.message, status: 404 });
   }
 };
