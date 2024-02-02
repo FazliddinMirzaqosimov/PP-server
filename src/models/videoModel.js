@@ -4,7 +4,7 @@ const videoSchema = new mongoose.Schema(
   {
     videoId: {
       type: String,
-      required: [true, "Video is required"],
+      // required: [true, "Video is required"],
     },
     title: {
       type: String,
@@ -13,10 +13,19 @@ const videoSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    courseSectionId: {
+    duration: {
+      type: Number,
+      required: [true, "Duration is required"],
+    },
+    sectionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CourseSection",
+      ref: "Section",
       required: [true, "Course section id is required"],
+    },
+    order: {
+      type: Number,
+      unique: true,
+      required: [true, "Order is required"],
     },
   },
   {

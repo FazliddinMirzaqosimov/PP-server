@@ -11,6 +11,5 @@ exports.API_URL = process.env.API_URL;
 exports.APP_URL = process.env.APP_URL;
 exports.DB = this.DATABASE.replace("<password>", this.DATABASE_PASSWORD);
 
- 
 //website roles
-exports.ROLES = ["user",   "superadmin" ];
+exports.ROLES = ["user", "admin", "superadmin"];

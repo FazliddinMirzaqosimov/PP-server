@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 
-const courseSectionSchema = new mongoose.Schema(
+const sectionSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -12,6 +12,10 @@ const courseSectionSchema = new mongoose.Schema(
     image: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "File",
+    },
+    order: {
+      type: Number,
+      required: [true, "Order is required"],
     },
     userId: {
       required: [true, "User id is required"],
@@ -31,6 +35,11 @@ const courseSectionSchema = new mongoose.Schema(
     },
   }
 );
-
-const CourseSection = mongoose.model("CourseSection", courseSectionSchema);
-module.exports = CourseSection;
+const Section = mongoose.model("Section", sectionSchema);
+  //  Section.db
+  //   .collection("sections").
+  //   dropIndex("courseId_1_order_1")
+  //   .then(console.log)
+  //   .catch(console.error)
+ 
+module.exports = Section;

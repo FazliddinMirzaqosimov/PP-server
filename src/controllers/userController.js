@@ -10,7 +10,7 @@ const { getUserBalance } = require("../utils/getBalance");
 class UserControllers {
   // Get all user list
   static getAll = async (req, res) => {
-     try {
+    try {
       const usersQuery = new APIFeatures(User.find(), req.query)
         .sort()
         .filter()
@@ -38,12 +38,13 @@ class UserControllers {
   static create = async (req, res) => {
     try {
       const { email, password, role } = req.body;
+      const verifiedAt = new Date();
 
       const { isValid, message } = passwordValidator(password);
       if (!isValid) {
         return sendError(res, { error: message, status: 422 });
       }
-      const user = await User.create({ email, role });
+      const user = await User.create({ email, role, password, verifiedAt });
       sendSucces(res, { data: { user }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -55,11 +56,11 @@ class UserControllers {
     try {
       const id = req.params.id;
 
-      const { fullName,role } = req.body;
+      const { fullName, role } = req.body;
 
       const user = await User.findByIdAndUpdate(
         id,
-        { fullName,role },
+        { fullName, role },
         { new: true, runValidators: true }
       );
 
