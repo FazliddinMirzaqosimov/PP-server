@@ -10,9 +10,6 @@ class ProgressControllers {
       const sectionId = req.query.sectionId;
       const progress = await Progress.findOne({ userId, sectionId });
 
- 
-     
-
       sendSucces(res, {
         status: 200,
         data: { progress: progress?.videoOrder || 1 },

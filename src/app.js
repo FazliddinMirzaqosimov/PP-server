@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const userRouter = require("./routers/userRouter");
 const authRouter = require("./routers/authRouter");
 const courseRouter = require("./routers/courseRouter");
- const videoRouter = require("./routers/videoRouter");
+const videoRouter = require("./routers/videoRouter");
 const purchaseRouter = require("./routers/purchaseRouter");
 const planRouter = require("./routers/planRouter");
 const corsOptions = require("./shared/cors");
@@ -13,10 +13,9 @@ const progressRouter = require("./routers/progressRouter");
 
 const app = express();
 
- 
 app.get("/", (req, res) => {
   res.send("hello");
-}); 
+});
 
 app.use(cors(corsOptions));
 app.use(express.json());

@@ -5,7 +5,12 @@ const generateToken = require("../utils/tokenGenerator");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, API_URL } = require("../shared/const");
 const util = require("util");
-const { sendRegisterEmail, sendUpdateEmailCode } = require("../utils/email");
+const {
+  sendRegisterEmail,
+  sendUpdateEmailCode,
+  sendForgotPasswordCode,
+  sendNewPasswordCode,
+} = require("../utils/email");
 const { v4: uuidv4 } = require("uuid");
 
 class AuthControllers {
@@ -217,9 +222,82 @@ class AuthControllers {
       user.email = user.newEmail;
       user.newEmail = undefined;
       user.newEmailCode = undefined;
-       await user.save();
-       sendSucces(res, {
+      await user.save();
+      sendSucces(res, {
         data: `Your email successfully changed`,
+        status: 200,
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  static sendNewPasswordCode = async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+      if (!email) {
+        return sendError(res, {
+          error: "Email is required!",
+          status: 400,
+        });
+      }
+
+      const { isValid, message } = passwordValidator(newPassword);
+
+      if (!isValid) {
+        return sendError(res, { error: message, status: 422 });
+      }
+
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return sendError(res, {
+          error: "User not found with this email!",
+          status: 400,
+        });
+      }
+
+      const newPasswordCode = String(
+        Math.floor(Math.random() * 1000000)
+      ).padStart(6, 0);
+
+      user.newPassword = newPassword;
+      user.newPasswordCode = newPasswordCode;
+      await user.save();
+
+      sendNewPasswordCode(newPasswordCode, email);
+      sendSucces(res, {
+        data: `We sent verification code to your new email: ${email}`,
+        status: 200,
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+  static updatePasswordWithCode = async (req, res) => {
+    try {
+      const { code, email } = req.body;
+
+      if (!code) {
+        return sendError(res, {
+          error: "code is required!",
+          status: 400,
+        });
+      }
+      const user = await User.findOne({ email });
+
+      if (code != user.newPasswordCode) {
+        return sendError(res, {
+          error: "code didnt match!",
+          status: 400,
+        });
+      }
+      user.password = user.newPassword;
+      user.newPassword = undefined;
+      user.newPasswordCode = undefined;
+      await user.save();
+      sendSucces(res, {
+        data: `Your password successfully changed!`,
         status: 200,
       });
     } catch (error) {

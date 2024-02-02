@@ -36,6 +36,8 @@ const userSchema = new mongoose.Schema(
     verificationCode: { type: String },
     newEmailCode: { type: String },
     newEmail: { type: String },
+    newPasswordCode: { type: String },
+    newPassword: { type: String },
     passwordChangedAt: { type: Date, select: false },
     startedCourses: {
       type: [
