@@ -3,6 +3,7 @@ const UserControllers = require("../controllers/userController");
 const AuthControllers = require("../controllers/authController");
 const { routeProtector } = require("../middlewares/routeProtector");
 const { allowTo } = require("../middlewares/roleFilter");
+const upload = require("../middlewares/fileUpload");
 
 const userRouter = express.Router();
 
@@ -11,6 +12,10 @@ userRouter
   .get(routeProtector, allowTo("superadmin"), UserControllers.getAll)
   .post(routeProtector, allowTo("superadmin"), UserControllers.create)
   .patch(routeProtector, UserControllers.editProfile);
+
+userRouter
+  .route("/profile-photo")
+  .post(routeProtector,upload.single("image"), UserControllers.updateProfile);
 
 userRouter
   .route("/balance")
@@ -25,7 +30,7 @@ userRouter
   .delete(routeProtector, UserControllers.removeCourse);
 
 userRouter.route("/buy-plan").post(routeProtector, UserControllers.buyPlan);
- 
+
 userRouter
   .route("/:id")
   .delete(routeProtector, allowTo("superadmin"), UserControllers.delete)

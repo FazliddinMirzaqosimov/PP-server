@@ -6,6 +6,9 @@ const Purchase = require("../models/purchaseModel");
 const Course = require("../models/courseModel");
 const Plan = require("../models/planModel");
 const { getUserBalance } = require("../utils/getBalance");
+const { FILE_URL } = require("../shared/const");
+const File = require("../models/fileModel");
+const { deleteFile } = require("../utils/s3/deleteFile");
 
 class UserControllers {
   // Get all user list
@@ -27,6 +30,44 @@ class UserControllers {
           },
           users,
         },
+        status: 200,
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  // Create admin from superadmin
+  static updateProfile = async (req, res) => {
+    try {
+      const user = req.user;
+      if (user.profileImage) {
+       const file =  await File.findByIdAndUpdate(
+          user.profileImage,
+          {
+            filename: req.file.key,
+            size: req.file.size,
+            location: req.file.location || `${FILE_URL}/${req.file.key}`,
+          },
+          {
+            upsert: true, // Create a new document if no document is found
+           }
+        );
+
+        file?.filename &&   deleteFile(file.filename)
+      } else {
+        const file = await File.create({
+          filename: req.file.key,
+          size: req.file.size,
+          location: req.file.location || `${FILE_URL}/${req.file.key}`,
+        });
+
+        user.profileImage = file._id;
+        await user.save();
+      }
+
+      sendSucces(res, {
+        data: { message: "Image succassfully updated/created." },
         status: 200,
       });
     } catch (error) {
@@ -115,7 +156,10 @@ class UserControllers {
   //get profile of user
   static getProfile = async (req, res) => {
     try {
-      const user = req.user;
+      let user = req.user.profileImage
+        ? await User.findById(req.user._id).populate("profileImage")
+        : req.user;
+
       const balance = await getUserBalance(user._id);
       const lastPurchase = await Purchase.findOne({
         userId: user._id,
@@ -127,6 +171,7 @@ class UserControllers {
           user: {
             email: user.email,
             role: user.role,
+            profileImage: user.profileImage,
             verifiedAt: user.verifiedAt,
           },
           balance,
