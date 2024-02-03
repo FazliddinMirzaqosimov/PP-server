@@ -42,7 +42,7 @@ class UserControllers {
     try {
       const user = req.user;
       if (user.profileImage) {
-       const file =  await File.findByIdAndUpdate(
+        const file = await File.findByIdAndUpdate(
           user.profileImage,
           {
             filename: req.file.key,
@@ -51,10 +51,10 @@ class UserControllers {
           },
           {
             upsert: true, // Create a new document if no document is found
-           }
+          }
         );
 
-        file?.filename &&   deleteFile(file.filename)
+        file?.filename && deleteFile(file.filename);
       } else {
         const file = await File.create({
           filename: req.file.key,
@@ -130,7 +130,7 @@ class UserControllers {
     }
   };
 
-  // Delete user 
+  // Delete user
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -321,6 +321,7 @@ class UserControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
-}
+
+ }
 
 module.exports = UserControllers;

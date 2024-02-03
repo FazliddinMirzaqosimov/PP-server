@@ -11,6 +11,7 @@ const corsOptions = require("./shared/cors");
 const sectionRouter = require("./routers/sectionRouter");
 const progressRouter = require("./routers/progressRouter");
 const fileRouter = require("./routers/fileRouter");
+const purchaseRequestRouter = require("./routers/purchaseRequestRouter");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/v1/file", fileRouter);
 app.use("/api/v1/progress", progressRouter);
+app.use("/api/v1/purchase-request", purchaseRequestRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/course", courseRouter);
