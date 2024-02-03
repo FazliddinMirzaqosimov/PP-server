@@ -14,8 +14,8 @@ userRouter
   .patch(routeProtector, UserControllers.editProfile);
 
 userRouter
-  .route("/profile-photo")
-  .post(routeProtector,upload.single("image"), UserControllers.updateProfile);
+  .route("/upload-photo")
+  .post(routeProtector,upload.single("image"), UserControllers.uploadPhoto);
 
 userRouter
   .route("/balance")

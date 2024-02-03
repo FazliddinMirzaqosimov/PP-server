@@ -3,12 +3,13 @@ const { passwordValidator } = require("../utils/validators/passwordValidator");
 const APIFeatures = require("../utils/apiFeatures");
 const Section = require("../models/sectionModel");
 const Progress = require("../models/progressModel");
+const { deleteFile } = require("../utils/s3/deleteFile");
 
 class SectionControllers {
-  // Get all sectionlist
+  // Get all section
   static getAll = async (req, res) => {
     try {
-      const sectionsQuery = new APIFeatures(Section.find(), req.query)
+      const sectionsQuery = new APIFeatures(Section.find().populate("image"), req.query)
         .sort()
         .filter()
         .paginate()
@@ -32,7 +33,7 @@ class SectionControllers {
     }
   };
 
-  // Create sectionlist
+  // Create section
   static create = async (req, res) => {
     try {
       let { order, chat, title, description, image, courseId, userId } =
@@ -87,11 +88,11 @@ class SectionControllers {
     }
   };
 
-  // Get sectionlist
+  // Get section
   static get = async (req, res) => {
     try {
       const id = req.params.id;
-      const section = await Section.findById(id);
+      const section = await Section.findById(id).populate("image");
       sendSucces(res, { status: 200, data: { section } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -99,11 +100,53 @@ class SectionControllers {
   };
 
   
- 
+   // upload photo to section
+   static uploadPhoto = async (req, res) => {
+    try {
+      const sectionId = req.params.id;
+      const section = await Section.findById(sectionId);
+      if (!section) {
+        return sendError(res, {
+          error: "Couldnt find section with this id!",
+          status: 404,
+        });
+      }
+       if (section.image) {
+        const file = await File.findByIdAndUpdate(
+          section.image,
+          {
+            filename: req.file.key,
+            size: req.file.size,
+            location: req.file.location || `${FILE_URL}/${req.file.key}`,
+          },
+          {
+            upsert: true, // Create a new document if no document is found
+          }
+        );
+        file?.filename && deleteFile(file.filename);
+      } else {
+        const file = await File.create({
+          filename: req.file.key,
+          size: req.file.size,
+          location: req.file.location || `${FILE_URL}/${req.file.key}`,
+        });
+
+        section.image = file._id;
+        await section.save();
+      }
+
+      sendSucces(res, {
+        data: { message: "Image succassfully updated/created." },
+        status: 200,
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
 
 
 
-  // Delete sectionlist
+  // Delete section
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -115,7 +158,7 @@ class SectionControllers {
     }
   };
 
-  // Edit sectionlist
+  // Edit section
   static edit = async (req, res) => {
     try {
       const id = req.params.id;

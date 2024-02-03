@@ -31,7 +31,7 @@ class PlanControllers {
     }
   };
 
-  // Create plan section list
+  // Create plan  
   static create = async (req, res) => {
     try {
       const { duration, description, price, title, image } = req.body;
@@ -49,7 +49,7 @@ class PlanControllers {
     }
   };
 
-  // Get plan section list
+  // Get plan  
   static get = async (req, res) => {
     try {
       const id = req.params.id;
@@ -61,7 +61,7 @@ class PlanControllers {
     }
   };
 
-  // Delete plan section list
+  // Delete plan  
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -73,7 +73,7 @@ class PlanControllers {
     }
   };
 
-  // Edit plan section list
+  // Edit plan  
   static edit = async (req, res) => {
     try {
       const id = req.params.id;

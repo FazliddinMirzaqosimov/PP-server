@@ -18,6 +18,8 @@ class ProgressControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
+
+  // next button clicked after watched video in order to watch next video
   static nextVideo = async (req, res) => {
     try {
       const userId = req.user._id;

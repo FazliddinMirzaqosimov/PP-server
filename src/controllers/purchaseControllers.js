@@ -36,7 +36,7 @@ class PurchaseControllers {
     }
   };
 
-  // Create purchase section list
+  // Create purchase  
   static create = async (req, res) => {
     try {
       const { email, amount } = req.body;
@@ -67,7 +67,7 @@ class PurchaseControllers {
     }
   };
 
-  // Get purchase section list
+  // Get purchase  
   static get = async (req, res) => {
     try {
       const id = req.params.id;
@@ -79,7 +79,7 @@ class PurchaseControllers {
     }
   };
 
-  // Get purchase section list
+  // Get purchase  
   static getPurchaseHistory = async (req, res) => {
     try {
       const id = req.user._id;
@@ -91,7 +91,7 @@ class PurchaseControllers {
     }
   };
 
-  // Delete purchase section list
+  // Delete purchase  
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -103,7 +103,7 @@ class PurchaseControllers {
     }
   };
 
-  // Edit purchase section list
+  // Edit purchase  
   static edit = async (req, res) => {
     try {
       const id = req.params.id;

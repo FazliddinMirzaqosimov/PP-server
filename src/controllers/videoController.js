@@ -3,7 +3,7 @@ const APIFeatures = require("../utils/apiFeatures");
 const Video = require("../models/videoModel");
 
 class VideoControllers {
-  // Get all videolist
+  // Get all video
   static getAll = async (req, res) => {
     try {
       const videoQuery = new APIFeatures(Video.find(), req.query)
@@ -30,7 +30,7 @@ class VideoControllers {
     }
   };
 
-  // Create videolist
+  // Create video
   static create = async (req, res) => {
     try {
       let { videoId, title, description, duration, sectionId, order } =
@@ -82,7 +82,7 @@ class VideoControllers {
     }
   };
 
-  // Get videolist
+  // Get video
   static get = async (req, res) => {
     try {
       const id = req.params.id;
@@ -94,7 +94,7 @@ class VideoControllers {
     }
   };
 
-  // Delete videolist
+  // Delete video
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -106,7 +106,7 @@ class VideoControllers {
     }
   };
 
-  // Edit videolist
+  // Edit video
   static edit = async (req, res) => {
     try {
       const id = req.params.id;

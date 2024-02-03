@@ -14,6 +14,7 @@ const {
 const { v4: uuidv4 } = require("uuid");
 
 class AuthControllers {
+  // Register users and send code to the email
   static register = async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -52,6 +53,7 @@ class AuthControllers {
     }
   };
 
+    // Login users
   static login = async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -91,6 +93,7 @@ class AuthControllers {
     }
   };
 
+      // Get code from register and activate user account
   static activateEmail = async (req, res) => {
     try {
       const { code, id } = req.query;
@@ -124,7 +127,8 @@ class AuthControllers {
     }
   };
 
-  static updatePassword = async (req, res) => {
+        // update user password while logged in  
+        static updatePassword = async (req, res) => {
     try {
       const { oldPassword, newPassword } = req.body;
 
@@ -158,7 +162,7 @@ class AuthControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
-
+        // Send email update code to users new email  
   static sendNewEmailCode = async (req, res) => {
     try {
       const { newEmail } = req.body;
@@ -202,6 +206,8 @@ class AuthControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
+
+  //update email using code
   static updateEmail = async (req, res) => {
     try {
       const { code } = req.body;
@@ -232,6 +238,7 @@ class AuthControllers {
     }
   };
 
+  //send update password code to forgot password page 
   static sendNewPasswordCode = async (req, res) => {
     try {
       const { email, newPassword } = req.body;
@@ -274,6 +281,8 @@ class AuthControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
+
+  //update password with code
   static updatePasswordWithCode = async (req, res) => {
     try {
       const { code, email } = req.body;

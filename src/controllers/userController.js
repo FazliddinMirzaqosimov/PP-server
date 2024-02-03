@@ -37,8 +37,8 @@ class UserControllers {
     }
   };
 
-  // Create admin from superadmin
-  static updateProfile = async (req, res) => {
+  // upload profile photo
+  static uploadPhoto = async (req, res) => {
     try {
       const user = req.user;
       if (user.profileImage) {
@@ -75,7 +75,7 @@ class UserControllers {
     }
   };
 
-  // Create admin from superadmin
+  // Create user
   static create = async (req, res) => {
     try {
       const { email, password, role } = req.body;
@@ -109,8 +109,9 @@ class UserControllers {
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
-  }; // Edit profile
+  };
 
+  // Edit profile
   static editProfile = async (req, res) => {
     try {
       const id = req.user._id;
@@ -129,7 +130,7 @@ class UserControllers {
     }
   };
 
-  // Delete user from superadmin
+  // Delete user 
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
