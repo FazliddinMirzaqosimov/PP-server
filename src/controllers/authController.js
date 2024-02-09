@@ -92,7 +92,7 @@ class AuthControllers {
       user.password = undefined;
       user.verifiedAt = undefined;
 
-      sendSucces(res, { data: { token, user }, status: 200 });
+      sendSucces(res, { data: { token  }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
