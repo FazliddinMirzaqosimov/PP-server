@@ -7,8 +7,7 @@ class PurchaseRequestController {
   static accept = async (req, res) => {
     //Keyinro kuniga limitli  purchase request qiliwni korib ciqiw kere
     try {
-      const { amount } = req.body;
-      const purchaseRequestId = req.body.id;
+      const { amount, purchaseRequestId } = req.body;
 
       if (!amount) {
         return sendError(res, { error: "Amount is missing!", status: 404 });

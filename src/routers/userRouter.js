@@ -20,6 +20,7 @@ userRouter
 userRouter
   .route("/balance")
   .get(routeProtector, allowTo("superadmin"), UserControllers.getBalance);
+  
 userRouter.route("/profile").get(routeProtector, UserControllers.getProfile);
 
 userRouter

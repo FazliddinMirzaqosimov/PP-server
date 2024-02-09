@@ -23,7 +23,7 @@ exports.routeProtector = async (req, res, next) => {
       JWT_SECRET
     );
 
-    const user = await User.findById(id) ;
+    const user = await User.findById(id).select("+password") ;
 
     if (!user) {
       return sendError(res, { error: "User not found", status: 404 });
