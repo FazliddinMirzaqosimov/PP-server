@@ -9,6 +9,10 @@ const { getUserBalance } = require("../utils/getBalance");
 const { FILE_URL } = require("../shared/const");
 const File = require("../models/fileModel");
 const { deleteFile } = require("../utils/s3/deleteFile");
+const {
+  hasActivePlan,
+  getCurrentPlanExpireDate,
+} = require("../utils/getCurrentPlanExpireDate");
 
 class UserControllers {
   // Get all user list
@@ -78,14 +82,20 @@ class UserControllers {
   // Create user
   static create = async (req, res) => {
     try {
-      const { email, password, role } = req.body;
+      const { email, password, role, phone } = req.body;
       const verifiedAt = new Date();
 
       const { isValid, message } = passwordValidator(password);
       if (!isValid) {
         return sendError(res, { error: message, status: 422 });
       }
-      const user = await User.create({ email, role, password, verifiedAt });
+      const user = await User.create({
+        email,
+        role,
+        password,
+        verifiedAt,
+        phone,
+      });
       sendSucces(res, { data: { user }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -116,11 +126,11 @@ class UserControllers {
     try {
       const id = req.user._id;
 
-      const { fullName } = req.body;
+      const { fullName, phone } = req.body;
 
       const user = await User.findByIdAndUpdate(
         id,
-        { fullName },
+        { fullName, phone },
         { new: true, runValidators: true }
       );
 
@@ -166,15 +176,30 @@ class UserControllers {
         userId: user._id,
         amount: { $gt: 0 },
       }).sort({ createdAt: -1 });
+
+      let activePlan = await getCurrentPlanExpireDate(user._id);
+
+      const planPurchase = activePlan.planPurchase;
+
+      if (planPurchase) {
+        planPurchase.planId = planPurchase.planId._id;
+        planPurchase.userId = undefined;
+        planPurchase.updatedAt = undefined;
+        planPurchase.__v = undefined;
+      } else {
+        activePlan = null;
+      }
+
       sendSucces(res, {
         status: 200,
         data: {
-          user: {
+          userData: {
             email: user.email,
             role: user.role,
             profileImage: user.profileImage,
             verifiedAt: user.verifiedAt,
           },
+          activePlan,
           balance,
           lastPurchase,
         },
@@ -218,26 +243,13 @@ class UserControllers {
         });
       }
 
-      const latestPurchase = await Purchase.findOne({
-        userId: user._id,
-        amount: { $lt: 0 },
-      })
-        .sort({ createdAt: -1 })
-        .populate("planId");
+      const { expirationDate } = await getCurrentPlanExpireDate(user._id);
 
-      if (latestPurchase) {
-        const latestPlanDuration =
-          latestPurchase.planId.duration * 24 * 60 * 60 * 1000;
-        const latestPlanStartDate = latestPurchase.createdAt.getTime();
-        const currentTime = new Date().getTime();
-        const expiresIn = new Date(latestPlanStartDate + latestPlanDuration);
-
-        if (expiresIn.getTime() > currentTime) {
-          return sendError(res, {
-            error: `Users' current plan will expire in "${expiresIn}" !`,
-            status: 404,
-          });
-        }
+      if (expirationDate) {
+        return sendError(res, {
+          error: `Users' current plan will expire in "${expirationDate}" !`,
+          status: 404,
+        });
       }
 
       const purchase = await Purchase.create({
@@ -321,7 +333,6 @@ class UserControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
-
- }
+}
 
 module.exports = UserControllers;

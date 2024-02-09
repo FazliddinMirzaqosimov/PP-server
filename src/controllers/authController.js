@@ -3,7 +3,7 @@ const { sendError, sendSucces } = require("../utils/senData");
 const { passwordValidator } = require("../utils/validators/passwordValidator");
 const generateToken = require("../utils/tokenGenerator");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET, API_URL } = require("../shared/const");
+const { JWT_SECRET, API_URL, APP_URL } = require("../shared/const");
 const util = require("util");
 const {
   sendRegisterEmail,
@@ -17,7 +17,7 @@ class AuthControllers {
   // Register users and send code to the email
   static register = async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, phone } = req.body;
       const role = "user";
 
       const { isValid, message } = passwordValidator(password);
@@ -31,12 +31,12 @@ class AuthControllers {
       if (user?.verifiedAt) {
         return sendSucces(res, {
           data: "Email already verified!",
-          status: 200,
+          status: 404,
         });
       }
 
       if (!user) {
-        user = await User.create({ email, password, role });
+        user = await User.create({ email, password, role, phone });
       }
 
       user.verificationCode = uuidv4();
@@ -53,7 +53,7 @@ class AuthControllers {
     }
   };
 
-    // Login users
+  // Login users
   static login = async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -64,7 +64,9 @@ class AuthControllers {
           status: 404,
         });
       }
-      const user = await User.findOne({ email }).select("+password");
+      const user = await User.findOne({ email }).select(
+        "+password email verifiedAt role"
+      );
       if (!user) {
         return sendError(res, {
           error: "Email not found",
@@ -87,13 +89,16 @@ class AuthControllers {
 
       const token = generateToken({ id: user._id });
 
+      user.password = undefined;
+      user.verifiedAt = undefined;
+
       sendSucces(res, { data: { token, user }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
   };
 
-      // Get code from register and activate user account
+  // Get code from register and activate user account
   static activateEmail = async (req, res) => {
     try {
       const { code, id } = req.query;
@@ -116,9 +121,10 @@ class AuthControllers {
       if (user.verificationCode === code) {
         user.verifiedAt = new Date();
         await user.save();
+        const token = generateToken({ id: user._id });
         return sendSucces(res, {
-          data: "Your email is verified! Now You can login!",
-          type: "send",
+          data: `${APP_URL}?jwt=${token}`,
+          type: "redirect",
           status: 200,
         });
       }
@@ -127,8 +133,8 @@ class AuthControllers {
     }
   };
 
-        // update user password while logged in  
-        static updatePassword = async (req, res) => {
+  // update user password while logged in
+  static updatePassword = async (req, res) => {
     try {
       const { oldPassword, newPassword } = req.body;
 
@@ -162,7 +168,7 @@ class AuthControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
-        // Send email update code to users new email  
+  // Send email update code to users new email
   static sendNewEmailCode = async (req, res) => {
     try {
       const { newEmail } = req.body;
@@ -238,7 +244,7 @@ class AuthControllers {
     }
   };
 
-  //send update password code to forgot password page 
+  //send update password code to forgot password page
   static sendNewPasswordCode = async (req, res) => {
     try {
       const { email, newPassword } = req.body;

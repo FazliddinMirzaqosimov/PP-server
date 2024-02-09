@@ -1,7 +1,7 @@
 const {  APP_URL } = require("./const");
 
 const allowedOrigins = [  APP_URL];
-
+ 
 const corsOptions = {
   origin: (origin, callback) => {
      if (!origin || allowedOrigins.includes(origin)) {
