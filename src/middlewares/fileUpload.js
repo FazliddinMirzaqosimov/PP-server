@@ -18,7 +18,7 @@ const multerStorage = multerS3({
   key: function (req, file, cb) {
     const fileNameList = file.originalname.split(".");
     const extension = fileNameList[fileNameList.length - 1];
- 
+
     cb(
       imageExtensions.includes(extension) ? null : "Should be image!",
       `${BUCKET_FOLDER_NAME}/${uuidv4()}.${extension}`
@@ -26,6 +26,9 @@ const multerStorage = multerS3({
   },
 });
 
-const upload = multer({ storage: multerStorage });
+const upload = multer({
+  storage: multerStorage,
+  limits: { fileSize: .4 * 1024 * 1024 },
+});
 
 module.exports = upload;
