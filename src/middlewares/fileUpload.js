@@ -1,4 +1,8 @@
-const { BUCKET_NAME, BUCKET_FOLDER_NAME } = require("../shared/const");
+const {
+  BUCKET_NAME,
+  BUCKET_FOLDER_NAME,
+  imageExtensions,
+} = require("../shared/const");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const { s3 } = require("../utils/s3");
@@ -13,11 +17,11 @@ const multerStorage = multerS3({
   },
   key: function (req, file, cb) {
     const fileNameList = file.originalname.split(".");
+    const extension = fileNameList[fileNameList.length - 1];
+ 
     cb(
-      null,
-      `${BUCKET_FOLDER_NAME}/${uuidv4()}.${
-        fileNameList[fileNameList.length - 1]
-      }`
+      imageExtensions.includes(extension) ? null : "Should be image!",
+      `${BUCKET_FOLDER_NAME}/${uuidv4()}.${extension}`
     );
   },
 });

@@ -17,6 +17,22 @@ exports.BUCKET_NAME = process.env.BUCKET_NAME;
 exports.FILE_URL = process.env.FILE_URL;
 exports.BUCKET_FOLDER_NAME = process.env.BUCKET_FOLDER_NAME;
 
- 
 //website roles
 exports.ROLES = ["user", "admin", "superadmin"];
+
+//image extensions
+
+exports.imageExtensions = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "bmp",
+  "tiff",
+  "tif",
+  "raw",
+  "svg",
+  "psd",
+  "ai",
+  "eps",
+];

@@ -195,8 +195,10 @@ class UserControllers {
         data: {
           userData: {
             email: user.email,
+            profileImage: user.profileImage.location,
+            phone: user.phone,
+            fullName: user.fullName,
             role: user.role,
-            profileImage: user.profileImage,
             verifiedAt: user.verifiedAt,
           },
           activePlan,
