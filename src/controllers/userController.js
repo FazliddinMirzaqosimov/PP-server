@@ -228,7 +228,7 @@ class UserControllers {
   // buy new plan
   static buyPlan = async (req, res) => {
     try {
-      const planId = req.query.planId;
+      const planId = req.body.planId;
       const user = req.user;
 
       const plan = await Plan.findById(planId);
@@ -263,7 +263,7 @@ class UserControllers {
       });
 
       sendSucces(res, {
-        data: { user, plan, latestPurchase, purchase },
+        data: { user, plan,   purchase },
         status: 200,
       });
     } catch (error) {
