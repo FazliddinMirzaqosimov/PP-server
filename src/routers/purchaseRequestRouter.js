@@ -39,7 +39,7 @@ purchaseRequestRouter
   );
 
 purchaseRequestRouter
-  .route("/accept/:id")
+  .route("/accept")
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),

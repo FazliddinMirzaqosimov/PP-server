@@ -10,7 +10,7 @@ class PurchaseControllers {
   static getAll = async (req, res) => {
     try {
       const purchasesQuery = new APIFeatures(
-        Purchase.find({userId:req.user._id}),
+        Purchase.find( ),
         req.query
       )
         .sort()

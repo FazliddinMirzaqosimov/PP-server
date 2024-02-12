@@ -231,7 +231,10 @@ class UserControllers {
     try {
       const planId = req.body.planId;
       const user = req.user;
-
+      
+      if (!planId) {
+        return sendError(res, { error: "planId is required!", status: 404 });
+      }
       const plan = await Plan.findById(planId);
       if (!plan) {
         return sendError(res, { error: "Plan not found!", status: 404 });
