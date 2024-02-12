@@ -7,7 +7,7 @@ const fileRouter = express.Router();
 fileRouter
   .route("/")
   .get(FileControllers.getAll)
-  .post(upload.array("files"), FileControllers.create);
+  .post(upload("files").array("files"), FileControllers.create);
 
 fileRouter
   .route("/:id")

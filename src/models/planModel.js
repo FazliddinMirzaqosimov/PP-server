@@ -13,7 +13,6 @@ const planSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-
     image: {
       type: { type: mongoose.Schema.Types.ObjectId, ref: "File" },
     },
@@ -23,6 +22,9 @@ const planSchema = new mongoose.Schema(
     },
     duration: {
       required: [true, "Duration is required"],
+      type: Number,
+    },
+    order: {
       type: Number,
     },
   },

@@ -84,7 +84,10 @@ class PurchaseControllers {
     try {
       const id = req.user._id;
 
-      const purchases = await Purchase.find({userId:id}).sort({createdAt:-1});
+      const purchases = await Purchase.find({userId:id}).populate({
+        path: 'planId',
+        select: 'order _id' 
+    }).sort({createdAt:-1});
       sendSucces(res, { status: 200, data: { purchases  } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });

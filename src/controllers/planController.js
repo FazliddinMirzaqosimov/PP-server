@@ -31,10 +31,11 @@ class PlanControllers {
     }
   };
 
-  // Create plan  
+  // Create plan
   static create = async (req, res) => {
     try {
-      const { duration, description, price, title, image } = req.body;
+      const { duration, description, price, title, image, advantages } =
+        req.body;
 
       const plan = await Plan.create({
         description,
@@ -42,6 +43,7 @@ class PlanControllers {
         title,
         duration,
         image,
+        advantages,
       });
       sendSucces(res, { data: { plan }, status: 200 });
     } catch (error) {
@@ -49,7 +51,7 @@ class PlanControllers {
     }
   };
 
-  // Get plan  
+  // Get plan
   static get = async (req, res) => {
     try {
       const id = req.params.id;
@@ -61,7 +63,7 @@ class PlanControllers {
     }
   };
 
-  // Delete plan  
+  // Delete plan
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -73,16 +75,17 @@ class PlanControllers {
     }
   };
 
-  // Edit plan  
+  // Edit plan
   static edit = async (req, res) => {
     try {
       const id = req.params.id;
 
-      const { duration, description, price, title, image } = req.body;
+      const { duration, description, price, title, image, advantages, order } =
+        req.body;
 
       const plan = await Plan.findByIdAndUpdate(
         id,
-        { duration, description, price, title, image },
+        { duration, description, price, title, image, advantages, order },
         { new: true, runValidators: true }
       );
       sendSucces(res, { data: { plan }, status: 200 });

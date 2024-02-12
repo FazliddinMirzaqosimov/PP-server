@@ -15,7 +15,7 @@ userRouter
 
 userRouter
   .route("/upload-photo")
-  .post(routeProtector,upload.single("image"), UserControllers.uploadPhoto);
+  .post(routeProtector,upload("userProfiles").single("image"), UserControllers.uploadPhoto);
 
 userRouter
   .route("/balance")

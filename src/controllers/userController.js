@@ -195,6 +195,7 @@ class UserControllers {
         data: {
           userData: {
             email: user.email,
+            _id: user._id,
             profileImage: user.profileImage?.location,
             phone: user.phone,
             fullName: user.fullName,
