@@ -34,7 +34,7 @@ class PlanControllers {
   // Create plan
   static create = async (req, res) => {
     try {
-      const { duration, description, price, title, image, advantages } =
+      const { duration, description, price, title, image, advantages, order } =
         req.body;
 
       const plan = await Plan.create({
@@ -44,6 +44,7 @@ class PlanControllers {
         duration,
         image,
         advantages,
+        order,
       });
       sendSucces(res, { data: { plan }, status: 200 });
     } catch (error) {
