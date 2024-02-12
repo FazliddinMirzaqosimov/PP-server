@@ -36,7 +36,7 @@ class PurchaseRequestController {
 
       const file = await File.findByIdAndDelete(purchaseRequest.file);
 
-      console.log({ purchaseRequest, file });
+
       deleteFile(file.filename);
 
       sendSucces(res, { status: 204 });
@@ -123,8 +123,7 @@ class PurchaseRequestController {
 
       const twentyFourHoursAgo = new Date();
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-      console.log(twentyFourHoursAgo);
-      // Query for files created less than 24 hours ago for the specified userId
+
       const latestRequestIn24 = await PurchaseRequest.findOne({
         user: user._id,
       }).sort("-createdAt");

@@ -57,8 +57,9 @@ class SectionControllers {
       } else if (order > lastSectionOrder + 1) {
         order = lastSectionOrder + 1;
       } else {
-        console.log(1);
-        const res = await Section.updateMany(
+
+      
+         await Section.updateMany(
           { courseId, order: { $gte: order } },
           { $inc: { order: 1 } }
         );
