@@ -168,7 +168,17 @@ class UserControllers {
   static getProfile = async (req, res) => {
     try {
       let user = req.user.profileImage
-        ? await User.findById(req.user._id).populate("profileImage")
+        ? await User.findById(req.user._id)
+            .populate("profileImage")
+            .populate({
+              path: "startedCourses",
+              select: "_id image", // Replace field1, field2, field3 with the actual fields you want to include
+              populate: {
+                path: "image",
+                model: "File", // Assuming "File" is the name of the model referencing images
+                select: "location -_id", // Replace field1, field2, field3 with the actual fields you want to include
+              },
+            })
         : req.user;
 
       const balance = await getUserBalance(user._id);
@@ -197,6 +207,7 @@ class UserControllers {
             email: user.email,
             _id: user._id,
             profileImage: user.profileImage?.location,
+            startedCourses: user.startedCourses,
             phone: user.phone,
             fullName: user.fullName,
             role: user.role,
@@ -231,7 +242,7 @@ class UserControllers {
     try {
       const planId = req.body.planId;
       const user = req.user;
-      
+
       if (!planId) {
         return sendError(res, { error: "planId is required!", status: 404 });
       }
@@ -267,7 +278,7 @@ class UserControllers {
       });
 
       sendSucces(res, {
-        data: { user, plan,   purchase },
+        data: { user, plan, purchase },
         status: 200,
       });
     } catch (error) {
@@ -278,7 +289,7 @@ class UserControllers {
   // add course to user
   static addCourse = async (req, res) => {
     try {
-      const courseId = req.query.courseId;
+      const courseId = req.body.courseId;
 
       if (!courseId) {
         return sendError(res, {
@@ -298,10 +309,7 @@ class UserControllers {
         });
       }
 
-      await req.user.updateOne(
-        { $push: { startedCourses: courseId } },
-        { new: true }
-      );
+      await req.user.updateOne({ $push: { startedCourses: courseId } });
 
       sendSucces(res, { data: "Course successfully added!", status: 200 });
     } catch (error) {

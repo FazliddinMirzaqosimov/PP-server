@@ -51,7 +51,9 @@ class PurchaseRequestController {
     try {
       const { amount, purchaseRequestId } = req.body;
 
-      if (!amount) {
+      if (!purchaseRequestId) {
+        return sendError(res, { error: "purchaseRequestId is missing!", status: 404 });
+      }if (!amount) {
         return sendError(res, { error: "Amount is missing!", status: 404 });
       }
       const purchaseRequest = await PurchaseRequest.findById(purchaseRequestId);

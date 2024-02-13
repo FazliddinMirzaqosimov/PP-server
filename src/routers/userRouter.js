@@ -25,7 +25,8 @@ userRouter.route("/profile").get(routeProtector, UserControllers.getProfile);
 
 userRouter
   .route("/add-course")
-  .patch(routeProtector, UserControllers.addCourse);
+  .post(routeProtector, UserControllers.addCourse);
+  
 userRouter
   .route("/remove-course")
   .delete(routeProtector, UserControllers.removeCourse);

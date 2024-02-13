@@ -28,6 +28,11 @@ courseRouter
 
 courseRouter
   .route("/upload-photo/:id")
-  .post(routeProtector, upload("coursePhotoa").single("image"), CourseControllers.uploadPhoto);
+  .post(
+    routeProtector,
+    allowTo("admin", "superadmin"),
+    upload("coursePhoto").single("image"),
+    CourseControllers.uploadPhoto
+  );
 
 module.exports = courseRouter;
