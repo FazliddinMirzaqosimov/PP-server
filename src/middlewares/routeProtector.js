@@ -3,6 +3,7 @@ const { sendError } = require("../utils/senData");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../shared/const");
 const util = require("util");
+const { senUserData } = require("../utils/botMessages");
 
 exports.routeProtector = async (req, res, next) => {
   try {
@@ -37,7 +38,7 @@ exports.routeProtector = async (req, res, next) => {
     
     req.user = user;
 
-    next();
+     next();
   } catch (error) {
     sendError(res, { error: error.message, status: 404 });
   }

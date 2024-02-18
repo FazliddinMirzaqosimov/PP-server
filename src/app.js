@@ -12,14 +12,19 @@ const sectionRouter = require("./routers/sectionRouter");
 const progressRouter = require("./routers/progressRouter");
 const fileRouter = require("./routers/fileRouter");
 const purchaseRequestRouter = require("./routers/purchaseRequestRouter");
+const { NODE_ENVIRONMENT } = require("./shared/const");
 
 const app = express();
 
 app.get("/", (req, res) => {
   res.send("hello");
 });
+if (NODE_ENVIRONMENT === "development") {
+  app.use(cors());
+} else {
+  app.use(cors(NODE_ENVIRONMENT !== "development" ? corsOptions : {}));
+}
 
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/v1/file", fileRouter);
@@ -34,4 +39,3 @@ app.use("/api/v1/purchase", purchaseRouter);
 app.use("/api/v1/plan", planRouter);
 
 module.exports = app;
- 

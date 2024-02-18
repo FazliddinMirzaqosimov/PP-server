@@ -1,3 +1,6 @@
+const bot = require("../bot");
+const { ADMINS_TGIDS } = require("../shared/const");
+
 exports.sendError = (
   res,
   { error = "Somthing went wrong", status = 404, type = "json" }

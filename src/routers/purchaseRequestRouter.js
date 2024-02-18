@@ -26,7 +26,7 @@ purchaseRequestRouter
   .route("/send")
   .post(
     routeProtector,
-    upload("purchaseRequests").single("file"),
+    upload("purchaseRequests",2).single("file"),
     PurchaseRequestController.send
   );
 

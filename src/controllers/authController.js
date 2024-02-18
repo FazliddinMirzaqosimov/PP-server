@@ -1,5 +1,5 @@
 const User = require("../models/userModel");
-const { sendError, sendSucces } = require("../utils/senData");
+const { sendError, sendSucces, sendToAdmins } = require("../utils/senData");
 const { passwordValidator } = require("../utils/validators/passwordValidator");
 const generateToken = require("../utils/tokenGenerator");
 const jwt = require("jsonwebtoken");
@@ -10,8 +10,9 @@ const {
   sendUpdateEmailCode,
   sendForgotPasswordCode,
   sendNewPasswordCode,
-} = require("../utils/email");
+} = require("../utils/emailMessages");
 const { v4: uuidv4 } = require("uuid");
+const { senUserData } = require("../utils/botMessages");
 
 class AuthControllers {
   // Register users and send code to the email
@@ -46,7 +47,6 @@ class AuthControllers {
         `${API_URL}/api/v1/auth/email-verification?code=${user.verificationCode}&id=${user._id}`,
         email
       );
-
       sendSucces(res, { data: "Email sent!", status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -89,10 +89,9 @@ class AuthControllers {
 
       const token = generateToken({ id: user._id });
 
-      user.password = undefined;
-      user.verifiedAt = undefined;
-
-      sendSucces(res, { data: { token  }, status: 200 });
+       
+      senUserData("User logged in!", user, ["login", "user"]);
+      sendSucces(res, { data: { token }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
@@ -122,6 +121,8 @@ class AuthControllers {
         user.verifiedAt = new Date();
         await user.save();
         const token = generateToken({ id: user._id });
+        senUserData("User signed in!", user, ["register", "user"]);
+
         return sendSucces(res, {
           data: `${APP_URL}?jwt=${token}`,
           type: "redirect",

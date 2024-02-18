@@ -8,7 +8,7 @@ const multerS3 = require("multer-s3");
 const { s3 } = require("../utils/s3");
 const { v4: uuidv4 } = require("uuid");
 
-const upload = (folderName) => {
+const upload = (folderName, mb = 0.4) => {
   const multerStorage = multerS3({
     s3,
     bucket: BUCKET_NAME,
@@ -29,7 +29,7 @@ const upload = (folderName) => {
 
   return multer({
     storage: multerStorage,
-    limits: { fileSize: 0.4 * 1024 * 1024 },
+    limits: { fileSize: mb * 1024 * 1024 },
   });
 };
 

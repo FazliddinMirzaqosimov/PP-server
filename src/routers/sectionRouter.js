@@ -7,13 +7,33 @@ const sectionRouter = express.Router();
 
 sectionRouter
   .route("/")
-  .get( SectionControllers.getAll)
-  .post(routeProtector,allowTo("admin","superadmin"), SectionControllers.create);
+  .get(SectionControllers.getAll)
+  .post(
+    routeProtector,
+    allowTo("admin", "superadmin"),
+    SectionControllers.create
+  );
 
 sectionRouter
   .route("/:id")
-  .delete(routeProtector,allowTo("admin","superadmin"), SectionControllers.delete)
-  .patch(routeProtector,allowTo("admin","superadmin"), SectionControllers.edit)
-  .get( SectionControllers.get);
+  .delete(
+    routeProtector,
+    allowTo("admin", "superadmin"),
+    SectionControllers.delete
+  )
+  .patch(
+    routeProtector,
+    allowTo("admin", "superadmin"),
+    SectionControllers.edit
+  )
+  .get(SectionControllers.get);
+
+sectionRouter
+  .route("/upload-photo/:id")
+  .post(
+    routeProtector,
+    allowTo("admin", "superadmin"),
+    SectionControllers.uploadPhoto
+  );
 
 module.exports = sectionRouter;
