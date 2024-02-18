@@ -65,7 +65,7 @@ class AuthControllers {
         });
       }
       const user = await User.findOne({ email }).select(
-        "+password email verifiedAt role"
+        "+password email verifiedAt role phone"
       );
       if (!user) {
         return sendError(res, {
