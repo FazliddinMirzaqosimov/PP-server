@@ -15,8 +15,8 @@ mongoose.connect(DB).then(() => {
 if (NODE_ENVIRONMENT === "development") {
   bot.launch();
 } else {
-  bot.createWebhook(API_URL);
-  app.use(bot.webhookCallback("/webhook"));
+  bot.telegram.setWebhook(`${API_URL}/bot`);
+  app.use(bot.webhookCallback("/bot"));
 }
 
 app.listen(PORT, () => {
