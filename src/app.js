@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger/swagger.json');
 const userRouter = require("./routers/userRouter");
 const authRouter = require("./routers/authRouter");
 const courseRouter = require("./routers/courseRouter");
@@ -25,6 +27,7 @@ if (NODE_ENVIRONMENT === "development") {
   app.use(cors(NODE_ENVIRONMENT !== "development" ? corsOptions : {}));
 }
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/v1/file", fileRouter);

@@ -18,13 +18,11 @@ class SectionControllers {
       const sections = await sectionsQuery.query;
 
       sendSucces(res, {
-        data: {
-          meta: {
-            result: sections.length,
-            page: sectionsQuery.page,
-            limit: sectionsQuery.limit,
-          },
-          sections,
+        data: sections,
+        meta: {
+          length: sections.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
         },
         status: 200,
       });

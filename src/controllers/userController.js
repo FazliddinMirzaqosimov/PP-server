@@ -25,14 +25,13 @@ class UserControllers {
         .limitFields();
 
       const users = await usersQuery.query;
+      
       sendSucces(res, {
-        data: {
-          meta: {
-            result: users.length,
-            page: usersQuery.page,
-            limit: usersQuery.limit,
-          },
-          users,
+        data: users,
+        meta: {
+          length: users.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
         },
         status: 200,
       });

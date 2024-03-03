@@ -15,13 +15,11 @@ class VideoControllers {
       const video = await videoQuery.query;
 
       sendSucces(res, {
-        data: {
-          meta: {
-            result: video.length,
-            page: videoQuery.page,
-            limit: videoQuery.limit,
-          },
-          video,
+        data: video,
+        meta: {
+          length: video.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
         },
         status: 200,
       });

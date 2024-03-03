@@ -10,8 +10,13 @@ exports.sendError = (
     [type](type === "json" ? { status: "failed", error } : error);
 };
 
-exports.sendSucces = (res, { data = {}, status = 200, type = "json" }) => {
+exports.sendSucces = (
+  res,
+  { data = {}, status = 200, type = "json", ...addicionalDatas }
+) => {
   res
     .status(status)
-    [type](type === "json" ? { status: "success", data } : data);
+    [type](
+      type === "json" ? { status: "success", data, ...addicionalDatas } : data
+    );
 };

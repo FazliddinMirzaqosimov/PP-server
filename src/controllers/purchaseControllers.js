@@ -21,13 +21,11 @@ class PurchaseControllers {
       const purchases = await purchasesQuery.query;
 
       sendSucces(res, {
-        data: {
-          meta: {
-            result: purchases.length,
-            page: purchasesQuery.page,
-            limit: purchasesQuery.limit,
-          },
-          purchases,
+        data: purchases,
+        meta: {
+          length: purchases.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
         },
         status: 200,
       });

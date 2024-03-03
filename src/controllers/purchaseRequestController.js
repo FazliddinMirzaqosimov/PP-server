@@ -1,6 +1,6 @@
 const Purchase = require("../models/purchaseModel");
 const File = require("../models/fileModel");
-const PurchaseRequest = require("../models/purchaseRquestModel");
+const PurchaseRequest = require("../models/purchaseRequestModel");
 const { sendSucces, sendError } = require("../utils/senData");
 const APIFeatures = require("../utils/apiFeatures");
 const { deleteFile } = require("../utils/s3/deleteFile");
@@ -9,7 +9,26 @@ class PurchaseRequestController {
   static async getAll(req, res) {
     try {
       const purchaseRequestQuery = new APIFeatures(
-        PurchaseRequest.find(),
+        PurchaseRequest.find().populate([
+          {
+            path: "user",
+            select: "role phone email fullName profileImage",
+            populate: {
+              path: "profileImage",
+              model: "File",
+              select: "location",
+            },
+          },
+          {
+            path: "file",
+            select: "location",
+          },
+          {
+            path: "purchase",
+            select: "amount createdAt",
+          },
+        ]),
+
         req.query
       )
         .sort()
@@ -19,7 +38,12 @@ class PurchaseRequestController {
 
       const purchaseRequests = await purchaseRequestQuery.query;
       sendSucces(res, {
-        data: { result: purchaseRequests.length, purchaseRequests },
+        data: purchaseRequests,
+        meta: {
+          length: purchaseRequests.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
+        },
         status: 200,
       });
     } catch (error) {
@@ -36,7 +60,6 @@ class PurchaseRequestController {
 
       const file = await File.findByIdAndDelete(purchaseRequest.file);
 
-
       deleteFile(file.filename);
 
       sendSucces(res, { status: 204 });
@@ -52,8 +75,12 @@ class PurchaseRequestController {
       const { amount, purchaseRequestId } = req.body;
 
       if (!purchaseRequestId) {
-        return sendError(res, { error: "purchaseRequestId is missing!", status: 404 });
-      }if (!amount) {
+        return sendError(res, {
+          error: "purchaseRequestId is missing!",
+          status: 404,
+        });
+      }
+      if (!amount) {
         return sendError(res, { error: "Amount is missing!", status: 404 });
       }
       const purchaseRequest = await PurchaseRequest.findById(purchaseRequestId);
@@ -119,7 +146,6 @@ class PurchaseRequestController {
           error: `Cannot find file!`,
           status: 404,
         });
-
       }
       const user = req.user;
 

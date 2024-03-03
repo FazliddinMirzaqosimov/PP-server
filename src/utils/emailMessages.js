@@ -1,7 +1,11 @@
 const nodemailer = require("nodemailer");
 const { EMAIL_USERNAME, EMAIL_PASSWORD } = require("../shared/const");
+const { isValidEmail } = require("./validators/emailValidator");
 
 function sendMail(options) {
+  if (!isValidEmail(options.to)) {
+    throw new Error("Email is not valid!")
+  }
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     host: "smtp.gmail.com",

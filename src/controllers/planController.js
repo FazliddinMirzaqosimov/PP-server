@@ -16,13 +16,11 @@ class PlanControllers {
       const plans = await plansQuery.query;
 
       sendSucces(res, {
-        data: {
-          meta: {
-            result: plans.length,
-            page: plansQuery.page,
-            limit: plansQuery.limit,
-          },
-          plans,
+        data: plans,
+        meta: {
+          length: plans.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
         },
         status: 200,
       });

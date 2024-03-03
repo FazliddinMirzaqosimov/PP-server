@@ -90,7 +90,7 @@ class AuthControllers {
       const token = generateToken({ id: user._id });
 
        
-      senUserData("User logged in!", user, ["login", "user"]);
+      // senUserData("User logged in!", user, ["login", "user"]);
       sendSucces(res, { data: { token }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });

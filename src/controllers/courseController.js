@@ -18,13 +18,11 @@ class CourseControllers {
       const courses = await coursesQuery.query;
 
       sendSucces(res, {
-        data: {
-          meta: {
-            result: courses.length,
-            page: coursesQuery.page,
-            limit: coursesQuery.limit,
-          },
-          courses,
+        data: courses,
+        meta: {
+          length: courses.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
         },
         status: 200,
       });

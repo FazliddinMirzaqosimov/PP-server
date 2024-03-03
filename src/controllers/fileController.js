@@ -13,8 +13,16 @@ class FileControllers {
         .paginate()
         .limitFields();
       const files = await fileQuery.query;
-      sendSucces(res, { data: { result: files.length, files }, status: 200 });
-    } catch (error) {
+
+      sendSucces(res, {
+        data: files,
+        meta: {
+          length: files.length,
+          limit: req.query.limit || 100,
+          page: req.query.page || 1,
+        },
+        status: 200,
+      });    } catch (error) {
       sendError(res, {error:error.message, status: 404});
     }
   }
