@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "swagger": "node src/swagger/index.js",
-    "dev": "node src/swagger/index.js && nodemon src/index.js"
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
