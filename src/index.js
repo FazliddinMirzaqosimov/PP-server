@@ -4,7 +4,6 @@ const app = require("./app");
 const mongoose = require("mongoose");
 const { PORT, DB, API_URL, NODE_ENVIRONMENT } = require("./shared/const");
 const bot = require("./bot");
-const { sendToAdmins } = require("./utils/senData");
 
 mongoose.connect(DB).then(() => {
   console.log("Database connected");
