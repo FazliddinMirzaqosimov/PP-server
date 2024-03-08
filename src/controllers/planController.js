@@ -14,13 +14,14 @@ class PlanControllers {
         .limitFields();
 
       const plans = await plansQuery.query;
+      const total = await Plan.countDocuments();
 
       sendSucces(res, {
         data: plans,
         meta: {
           length: plans.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });

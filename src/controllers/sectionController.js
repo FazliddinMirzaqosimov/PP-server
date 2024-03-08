@@ -16,13 +16,14 @@ class SectionControllers {
         .limitFields();
 
       const sections = await sectionsQuery.query;
+      const total = await Section.countDocuments();
 
       sendSucces(res, {
         data: sections,
         meta: {
           length: sections.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });

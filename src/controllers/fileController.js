@@ -13,13 +13,14 @@ class FileControllers {
         .paginate()
         .limitFields();
       const files = await fileQuery.query;
+      const total = await File.countDocuments();
 
       sendSucces(res, {
         data: files,
         meta: {
           length: files.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });    } catch (error) {

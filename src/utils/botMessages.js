@@ -3,9 +3,16 @@ const bot = require("../bot");
 const { ADMINS_TGIDS } = require("../shared/const");
 
 exports.sendToAdmins = (message) => {
+  if (!message) {
+    throw Error("message is required!")
+  }
   ADMINS_TGIDS.forEach(async (adminId) => {
     try {
-      await bot.telegram.sendMessage(adminId, message);
+      if (typeof message === "string") {
+        await bot.telegram.sendMessage(adminId, message);
+      } else {
+        await message(adminId)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -13,8 +20,7 @@ exports.sendToAdmins = (message) => {
 };
 
 exports.senUserData = (title, user, tags = []) => {
-
-    this.sendToAdmins(`
+  this.sendToAdmins(`
         ${title}
         
 Email: ${user.email}

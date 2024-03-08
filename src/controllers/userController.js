@@ -18,20 +18,27 @@ class UserControllers {
   // Get all user list
   static getAll = async (req, res) => {
     try {
-      const usersQuery = new APIFeatures(User.find(), req.query)
+      const usersQuery = new APIFeatures(
+        User.find().populate({
+          path: "profileImage",
+          select: "location",
+        }),
+        req.query
+      )
         .sort()
         .filter()
         .paginate()
         .limitFields();
 
       const users = await usersQuery.query;
-      
+      const total = await User.countDocuments();
+
       sendSucces(res, {
         data: users,
         meta: {
           length: users.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });

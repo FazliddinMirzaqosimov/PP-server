@@ -13,13 +13,14 @@ class VideoControllers {
         .limitFields();
 
       const video = await videoQuery.query;
+      const total = await Video.countDocuments();
 
       sendSucces(res, {
         data: video,
         meta: {
           length: video.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });

@@ -31,7 +31,7 @@ purchaseRequestRouter
   );
 
 purchaseRequestRouter
-  .route("/disable-duplicate/:id")
+  .route("/duplicate")
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),

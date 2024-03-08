@@ -10,7 +10,10 @@ class PurchaseControllers {
   static getAll = async (req, res) => {
     try {
       const purchasesQuery = new APIFeatures(
-        Purchase.find( ),
+        Purchase.find().populate({
+          path: "userId",
+          populate: { path: "profileImage", select: "location" },
+        }),
         req.query
       )
         .sort()
@@ -19,13 +22,14 @@ class PurchaseControllers {
         .limitFields();
 
       const purchases = await purchasesQuery.query;
+      const total = await Purchase.countDocuments();
 
       sendSucces(res, {
         data: purchases,
         meta: {
           length: purchases.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });
@@ -34,7 +38,7 @@ class PurchaseControllers {
     }
   };
 
-  // Create purchase  
+  // Create purchase
   static create = async (req, res) => {
     try {
       const { email, amount } = req.body;
@@ -65,7 +69,7 @@ class PurchaseControllers {
     }
   };
 
-  // Get purchase  
+  // Get purchase
   static get = async (req, res) => {
     try {
       const id = req.params.id;
@@ -77,22 +81,24 @@ class PurchaseControllers {
     }
   };
 
-  // Get purchase  
+  // Get purchase
   static getPurchaseHistory = async (req, res) => {
     try {
       const id = req.user._id;
 
-      const purchases = await Purchase.find({userId:id}).populate({
-        path: 'planId',
-        select: 'order _id' 
-    }).sort({createdAt:-1});
-      sendSucces(res, { status: 200, data: { purchases  } });
+      const purchases = await Purchase.find({ userId: id })
+        .populate({
+          path: "planId",
+          select: "order _id",
+        })
+        .sort({ createdAt: -1 });
+      sendSucces(res, { status: 200, data: { purchases } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
   };
 
-  // Delete purchase  
+  // Delete purchase
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -104,7 +110,7 @@ class PurchaseControllers {
     }
   };
 
-  // Edit purchase  
+  // Edit purchase
   static edit = async (req, res) => {
     try {
       const id = req.params.id;

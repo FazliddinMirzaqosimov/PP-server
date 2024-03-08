@@ -4,6 +4,10 @@ const PurchaseRequest = require("../models/purchaseRequestModel");
 const { sendSucces, sendError } = require("../utils/senData");
 const APIFeatures = require("../utils/apiFeatures");
 const { deleteFile } = require("../utils/s3/deleteFile");
+const { FILE_URL, NODE_ENVIRONMENT } = require("../shared/const");
+const { sendToAdmins } = require("../utils/botMessages");
+const bot = require("../bot");
+const { Markup } = require("telegraf");
 
 class PurchaseRequestController {
   static async getAll(req, res) {
@@ -37,12 +41,15 @@ class PurchaseRequestController {
         .limitFields();
 
       const purchaseRequests = await purchaseRequestQuery.query;
+      const total = await PurchaseRequest.countDocuments();
+
       sendSucces(res, {
         data: purchaseRequests,
         meta: {
           length: purchaseRequests.length,
           limit: req.query.limit || 100,
           page: req.query.page || 1,
+          total,
         },
         status: 200,
       });
@@ -120,11 +127,15 @@ class PurchaseRequestController {
 
   static duplicateRequest = async (req, res) => {
     try {
-      const purchaseRequestId = req.body.id;
+      const { purchaseRequestId } = req.body;
 
-      const purchaseRequest = await PurchaseRequest.findById(purchaseRequestId);
-      purchaseRequest.status = "duplicate";
-      await purchaseRequest.save();
+      const purchaseRequest = await PurchaseRequest.findByIdAndUpdate(
+        purchaseRequestId,
+        {
+          status: "duplicate",
+        },
+        { new: true, runValidators: true }
+      );
 
       sendSucces(res, {
         data: {
@@ -152,16 +163,19 @@ class PurchaseRequestController {
       const twentyFourHoursAgo = new Date();
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-      const latestRequestIn24 = await PurchaseRequest.findOne({
-        user: user._id,
-      }).sort("-createdAt");
+      if (NODE_ENVIRONMENT !== "development") {
+        const latestRequestIn24 = await PurchaseRequest.findOne({
+          user: user._id,
+          status: { $or: ["new", "duplicate"] },
+        }).sort("-createdAt");
 
-      if (latestRequestIn24) {
-        deleteFile(req.file.key);
-        return sendError(res, {
-          error: `1 purchase request allowed in 1 day!  ${twentyFourHoursAgo.toISOString()} ${latestRequestIn24.createdAt.toISOString()}`,
-          status: 404,
-        });
+        if (latestRequestIn24) {
+          deleteFile(req.file.key);
+          return sendError(res, {
+            error: `1 purchase request allowed in 1 day!  ${twentyFourHoursAgo.toISOString()} ${latestRequestIn24.createdAt.toISOString()}`,
+            status: 404,
+          });
+        }
       }
 
       const file = await File.create({
@@ -173,6 +187,29 @@ class PurchaseRequestController {
         user: user._id,
         file: file._id,
       });
+
+      sendToAdmins((adminId) =>
+        bot.telegram.sendPhoto(adminId, file.location, {
+          // reply_markup: Markup.inlineKeyboard([
+          //   Markup.button.webApp("Open", "https://app.fazliddin.dev"),
+          //   Markup.button.url("Open Link", "https://example.com"),
+          //   Markup.button.callback("Press Me", "press"),
+          // ]),
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "Open Link",
+                  web_app: { url: "https://fazliddin.dev" },
+                },
+                { text: "Press Me", callback_data: "press" },
+              ],
+            ],
+          },
+          caption: "This is an image",
+        })
+      );
+
       sendSucces(res, {
         data: {
           purchaseRequest,

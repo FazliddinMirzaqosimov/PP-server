@@ -16,13 +16,14 @@ class CourseControllers {
         .limitFields();
 
       const courses = await coursesQuery.query;
+      const total = await Course.countDocuments();
 
       sendSucces(res, {
         data: courses,
         meta: {
           length: courses.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,
+          page: req.query.page || 1,total
         },
         status: 200,
       });
