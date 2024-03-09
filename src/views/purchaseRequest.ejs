@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/public/styles/purchaseRequest.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="btns">
+      <input type="number" placeholder="Amount:" data-id="<%= purchaseRequest._id %>" id="input"/>
+      <button class="accept" onclick="accept()">Accept</button>
+    </div>
+   
+    
+    <div class="profile">
+      <img src="<%= purchaseRequest.user.profileImage.location %>" alt="" />
+      <div class="info">
+        <h1><%= purchaseRequest.user.fullName %></h1>
+        <h2><%= purchaseRequest.user.email %></h2>
+        <p><%= purchaseRequest.user.role %></p>
+      </div>
+    </div>
+
+    <h1 class="title">Purchase request</h1>
+    <div class="purchase">
+      <img src="<%= purchaseRequest.file.location %>" alt="" />
+      <div class="info">
+        <h1>20:00</h1>
+        <p>02.04.2024 Wednesday</p>
+        <h2>Status: <span><%= purchaseRequest.status %></span></h2>
+      </div>
+    </div>
+
+    <h1 class="title">Latest purchase list</h1>
+    <div class="history">
+      <% history.forEach((request)=> { %>
+      <div class="request">
+        <img src="<%= request.file.location %>" alt="" />
+        <p><%= request.status %></p>
+        <p>
+          <%= String(request.createdAt.getDate() + 1).padStart(2,"0") %>.<%=
+          String(request.createdAt.getMonth() + 1).padStart(2,"0") %>.<%=
+          request.createdAt.getFullYear() %> <%= request.createdAt.getHours()
+          %>:<%= request.createdAt.getMinutes() %>
+        </p>
+      </div>
+      <% }) %>
+    </div>
+     
+    <script>
+
+      console.log(window.location)
+      function accept(e) {
+        const input = document.getElementById("input")
+        window.location.replace(`/api/v1/purchase-request/accept-from-bot/<%= purchaseRequest._id %>?amount=${input.value}`)
+      }
+    </script>
+  </body>
+</html>

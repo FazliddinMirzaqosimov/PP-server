@@ -1,14 +1,14 @@
-const {  APP_URL } = require("./const");
+const { APP_URL, ADMIN_APP_URL } = require("./const");
 
-const allowedOrigins = [  APP_URL];
- 
+const allowedOrigins = [APP_URL, ADMIN_APP_URL];
+
 const corsOptions = {
   origin: (origin, callback) => {
-     if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback( `"${origin}" is not allowed by CORS`) ;
-    } 
+      callback(`"${origin}" is not allowed by CORS`);
+    }
   },
 };
 

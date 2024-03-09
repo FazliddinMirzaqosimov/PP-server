@@ -125,6 +125,78 @@ class PurchaseRequestController {
     }
   };
 
+  //Send Purchase if user wants to purchase to his account
+  static acceptFromBot = async (req, res) => {
+    //Keyinro kuniga limitli  purchase request qiliwni korib ciqiw kere
+    try {
+      const { adminId, amount } = req.query;
+      const { id } = req.params;
+      console.log({ id });
+      if (!adminId) {
+        return res.send("<h1>There is no adminId</h1>");
+      }
+
+      if (amount && !isNaN(amount)) {
+        const purchaseRequest = await PurchaseRequest.findById(id).populate({
+          path: "user",
+          select: "email",
+        });
+        console.log({ purchaseRequest });
+        if (!purchaseRequest) {
+          return sendSucces(res, {
+            type: "send",
+            data: "<h1>There is no  purchase request with this id!</h1>",
+          });
+        }
+        if (purchaseRequest.purchase) {
+          return sendSucces(res, {
+            type: "send",
+            data: "<h1>You already purchased to this request!</h1>",
+          });
+        }
+
+        const purchase = await Purchase.create({
+          amount,
+          userId: purchaseRequest.user._id,
+        });
+
+        purchaseRequest.purchase = purchase._id;
+        purchaseRequest.status = "active";
+        await purchaseRequest.save();
+
+        return res.send(
+          `<h1>SUCCESSFULLY purchased ${amount}$ to ${purchaseRequest.user.email}</h1>`
+        );
+      }
+      const purchaseRequest = await PurchaseRequest.findById(id).populate([
+        {
+          path: "user",
+          select: "role fullName email file",
+          populate: {
+            path: "profileImage",
+            select: "location",
+          },
+        },
+        {
+          path: "file",
+          select: "location",
+        },
+      ]);
+      const history = await PurchaseRequest.find({
+        user: purchaseRequest.user._id,
+      }).populate({
+        path: "file",
+        select: "location",
+      });
+      res.status(200).render("purchaseRequest.ejs", {
+        purchaseRequest,
+        history,
+      });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
   static duplicateRequest = async (req, res) => {
     try {
       const { purchaseRequestId } = req.body;

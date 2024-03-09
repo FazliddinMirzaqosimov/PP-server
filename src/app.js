@@ -15,6 +15,7 @@ const progressRouter = require("./routers/progressRouter");
 const fileRouter = require("./routers/fileRouter");
 const purchaseRequestRouter = require("./routers/purchaseRequestRouter");
 const { NODE_ENVIRONMENT } = require("./shared/const");
+const path = require("path");
 
 const app = express();
 
@@ -27,6 +28,11 @@ if (NODE_ENVIRONMENT === "development") {
   app.use(cors(NODE_ENVIRONMENT !== "development" ? corsOptions : {}));
 }
 // app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.set("view engine", "ejs");
+
+// Specify the directory where your EJS files are located
+app.set("views", path.join(__dirname, "views"));
+app.use("/public",express.static(path.join(__dirname, "..", "public")));
 
 app.use(express.json());
 app.use(morgan("dev"));

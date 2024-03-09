@@ -22,12 +22,18 @@ purchaseRequestRouter
     PurchaseRequestController.delete
   );
 
-purchaseRequestRouter
+  purchaseRequestRouter
   .route("/send")
   .post(
     routeProtector,
     upload("purchaseRequests",2).single("file"),
     PurchaseRequestController.send
+  );
+
+  purchaseRequestRouter
+  .route("/accept-from-bot/:id")
+  .get(
+     PurchaseRequestController.acceptFromBot
   );
 
 purchaseRequestRouter

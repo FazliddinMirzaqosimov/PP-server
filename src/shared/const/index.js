@@ -10,6 +10,7 @@ exports.EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 exports.PROJECT_ID = process.env.PROJECT_ID;
 exports.API_URL = process.env.API_URL;
 exports.APP_URL = process.env.APP_URL;
+exports.ADMIN_APP_URL = process.env.ADMIN_APP_URL;
 exports.AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 exports.AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 exports.S3_ENDPOINT = process.env.S3_ENDPOINT;
