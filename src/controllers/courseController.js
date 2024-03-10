@@ -9,7 +9,10 @@ class CourseControllers {
   // Get all course list
   static getAll = async (req, res) => {
     try {
-      const coursesQuery = new APIFeatures(Course.find().populate("image"), req.query)
+      const coursesQuery = new APIFeatures(
+        Course.find().populate("image"),
+        req.query
+      )
         .sort()
         .filter()
         .paginate()
@@ -23,7 +26,8 @@ class CourseControllers {
         meta: {
           length: courses.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,total
+          page: req.query.page || 1,
+          total,
         },
         status: 200,
       });
@@ -32,10 +36,10 @@ class CourseControllers {
     }
   };
 
-  // Create course  
+  // Create course
   static create = async (req, res) => {
     try {
-      const { chat, title, description, image } = req.body;
+      const { chat, title, description } = req.body;
       const userId = req.user._id;
 
       const course = await Course.create({
@@ -43,8 +47,8 @@ class CourseControllers {
         title,
         description,
         userId,
-        image,
       });
+      
       sendSucces(res, { data: { course }, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -62,7 +66,8 @@ class CourseControllers {
           status: 404,
         });
       }
-       if (course.image) {
+
+      if (course.image) {
         const file = await File.findByIdAndUpdate(
           course.image,
           {
@@ -95,7 +100,7 @@ class CourseControllers {
     }
   };
 
-  // Get a course  
+  // Get a course
   static get = async (req, res) => {
     try {
       const id = req.params.id;
@@ -107,7 +112,7 @@ class CourseControllers {
     }
   };
 
-  // Delete course  
+  // Delete course
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
@@ -119,7 +124,7 @@ class CourseControllers {
     }
   };
 
-  // Edit course  
+  // Edit course
   static edit = async (req, res) => {
     try {
       const id = req.params.id;

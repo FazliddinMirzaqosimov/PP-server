@@ -31,7 +31,7 @@ courseRouter
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),
-    upload("coursePhoto",1).single("image"),
+    upload("coursePhoto", 1).single("image"),
     CourseControllers.uploadPhoto
   );
 
