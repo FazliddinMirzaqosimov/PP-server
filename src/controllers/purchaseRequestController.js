@@ -8,6 +8,7 @@ const { FILE_URL, NODE_ENVIRONMENT } = require("../shared/const");
 const { sendToAdmins } = require("../utils/botMessages");
 const bot = require("../bot");
 const { Markup } = require("telegraf");
+const getFilterObject = require("../utils/getFilterObject");
 
 class PurchaseRequestController {
   static async getAll(req, res) {
@@ -41,8 +42,9 @@ class PurchaseRequestController {
         .limitFields();
 
       const purchaseRequests = await purchaseRequestQuery.query;
-      const total = await PurchaseRequest.countDocuments();
 
+      const filterObject = getFilterObject(PurchaseRequest, req.query);
+      const total = await PurchaseRequest.countDocuments(filterObject);
       sendSucces(res, {
         data: purchaseRequests,
         meta: {
@@ -235,20 +237,19 @@ class PurchaseRequestController {
       const twentyFourHoursAgo = new Date();
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-      if (NODE_ENVIRONMENT !== "development") {
-        const latestRequestIn24 = await PurchaseRequest.findOne({
-          user: user._id,
-          status: { $or: ["new", "duplicate"] },
-        }).sort("-createdAt");
+      // if (NODE_ENVIRONMENT !== "development") {
+      const latestRequestsIn24 = await PurchaseRequest.find({
+        user: user._id,
+      }).sort("-createdAt");
 
-        if (latestRequestIn24) {
-          deleteFile(req.file.key);
-          return sendError(res, {
-            error: `1 purchase request allowed in 1 day!  ${twentyFourHoursAgo.toISOString()} ${latestRequestIn24.createdAt.toISOString()}`,
-            status: 404,
-          });
-        }
+      if (latestRequestsIn24.length >= 3) {
+        deleteFile(req.file.key);
+        return sendError(res, {
+          error: `3 purchases request allowed in 1 day!  ${twentyFourHoursAgo.toISOString()} ${latestRequestsIn24[0].createdAt.toISOString()}`,
+          status: 404,
+        });
       }
+      // }
 
       const file = await File.create({
         filename: req.file.key,
