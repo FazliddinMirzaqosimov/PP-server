@@ -9,7 +9,11 @@ const courseSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    image:{
+    image: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "File",
+    },
+    logo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "File",
     },
@@ -17,11 +21,19 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: [true, "Chat is required"],
     },
-     
+    type: {
+      type: String,
+      enum: ["free", "premium"],
+      default: "free",
+    },
     userId: {
-      required: [true, "User id is required"],
+      required: [true, "User is required"],
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    trailer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Trailer",
     },
   },
   {

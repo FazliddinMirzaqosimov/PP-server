@@ -13,7 +13,7 @@ const sectionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "File",
     },
-    order: {
+    order: { 
       type: Number,
       required: [true, "Order is required"],
     },

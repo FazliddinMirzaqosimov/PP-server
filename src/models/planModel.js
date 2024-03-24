@@ -13,8 +13,10 @@ const planSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    image: {
-      type: { type: mongoose.Schema.Types.ObjectId, ref: "File" },
+    color:{
+      type: String,
+      default:"#ebc870"
+
     },
     price: {
       required: [true, "Price is required"],

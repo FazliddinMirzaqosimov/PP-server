@@ -4,12 +4,20 @@ const APIFeatures = require("../utils/apiFeatures");
 const Section = require("../models/sectionModel");
 const Progress = require("../models/progressModel");
 const { deleteFile } = require("../utils/s3/deleteFile");
+const File = require("../models/fileModel");
+const { FILE_URL } = require("../shared/const");
 
 class SectionControllers {
   // Get all section
   static getAll = async (req, res) => {
     try {
-      const sectionsQuery = new APIFeatures(Section.find().populate("image"), req.query)
+      const sectionsQuery = new APIFeatures(
+        Section.find().populate([
+          { path: "image" },
+          { path: "courseId", select: "title" },
+        ]),
+        req.query
+      )
         .sort()
         .filter()
         .paginate()
@@ -23,7 +31,8 @@ class SectionControllers {
         meta: {
           length: sections.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,total
+          page: req.query.page || 1,
+          total,
         },
         status: 200,
       });
@@ -35,8 +44,7 @@ class SectionControllers {
   // Create section
   static create = async (req, res) => {
     try {
-      let { order, chat, title, description, image, courseId, userId } =
-        req.body;
+      let { order, title, description, image, courseId, userId } = req.body;
       userId = userId || req.user._id;
 
       const lastSection = await Section.findOne({
@@ -56,9 +64,7 @@ class SectionControllers {
       } else if (order > lastSectionOrder + 1) {
         order = lastSectionOrder + 1;
       } else {
-
-      
-         await Section.updateMany(
+        await Section.updateMany(
           { courseId, order: { $gte: order } },
           { $inc: { order: 1 } }
         );
@@ -73,7 +79,6 @@ class SectionControllers {
       }
 
       const section = await Section.create({
-        chat,
         title,
         description,
         userId,
@@ -99,9 +104,8 @@ class SectionControllers {
     }
   };
 
-  
-   // upload photo to section
-   static uploadPhoto = async (req, res) => {
+  // upload photo to section
+  static uploadPhoto = async (req, res) => {
     try {
       const sectionId = req.params.id;
       const section = await Section.findById(sectionId);
@@ -111,7 +115,7 @@ class SectionControllers {
           status: 404,
         });
       }
-       if (section.image) {
+      if (section.image) {
         const file = await File.findByIdAndUpdate(
           section.image,
           {
@@ -143,8 +147,6 @@ class SectionControllers {
       sendError(res, { error: error.message, status: 404 });
     }
   };
-
-
 
   // Delete section
   static delete = async (req, res) => {

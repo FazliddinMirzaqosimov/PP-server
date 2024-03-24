@@ -1,12 +1,25 @@
 const { sendError, sendSucces } = require("../utils/senData");
 const APIFeatures = require("../utils/apiFeatures");
 const Video = require("../models/videoModel");
+const Section = require("../models/sectionModel");
 
 class VideoControllers {
   // Get all video
   static getAll = async (req, res) => {
     try {
-      const videoQuery = new APIFeatures(Video.find(), req.query)
+      const videoQuery = new APIFeatures(
+        Video.find().populate([
+          {
+            path: "courseId",
+            select: "title",
+          },
+          {
+            path: "sectionId",
+            select: "title",
+          },
+        ]),
+        req.query
+      )
         .sort()
         .filter()
         .paginate()
@@ -20,7 +33,8 @@ class VideoControllers {
         meta: {
           length: video.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,total
+          page: req.query.page || 1,
+          total,
         },
         status: 200,
       });
@@ -32,14 +46,31 @@ class VideoControllers {
   // Create video
   static create = async (req, res) => {
     try {
-      let { videoId, title, description, duration, sectionId, order } =
-        req.body;
+      let {
+        link,
+        type,
+        title,
+        description,
+        duration,
+        courseId,
+        sectionId,
+        order,
+      } = req.body;
+
+      const section = await Section.findOne({
+        _id: sectionId,
+        courseId,
+      });
+      if (!section) {
+        return sendError(res, { error: "Section is not found!", status: 404 });
+      }
 
       const lastVideo = await Video.findOne({
         sectionId,
       }).sort({ order: -1 });
       const lastVideoOrder = lastVideo?.order || 0;
 
+      console.log({ order }, lastVideoOrder + 1);
       if (!order) {
         order = lastVideoOrder + 1;
       } else if (!Number.isInteger(order)) {
@@ -52,7 +83,7 @@ class VideoControllers {
       } else if (order > lastVideoOrder + 1) {
         order = lastVideoOrder + 1;
       } else {
-    
+        console.log({ order }, lastVideoOrder + 1);
         await Video.updateMany(
           { sectionId, order: { $gte: order } },
           { $inc: { order: 1 } }
@@ -62,22 +93,25 @@ class VideoControllers {
 
       if (existVideo) {
         return sendError(res, {
-          error: "Video with this order is already exist in this course section!",
+          error:
+            "Video with this order is already exist in this course section!",
           status: 404,
         });
       }
 
       const video = await Video.create({
-        videoId,
+        link,
         title,
         description,
         duration,
         sectionId,
         order,
+        type,
+        courseId,
       });
       sendSucces(res, { data: { video }, status: 200 });
     } catch (error) {
-       sendError(res, { error: error.message, status: 404 });
+      sendError(res, { error: error.message, status: 404 });
     }
   };
 
@@ -110,15 +144,19 @@ class VideoControllers {
     try {
       const id = req.params.id;
 
-      const { videoId, title, description, sectionId } = req.body;
+      let { title, description, sectionId, courseId, link, type, duration } =
+        req.body;
 
       const video = await Video.findByIdAndUpdate(
         id,
         {
-          videoId,
           title,
           description,
           sectionId,
+          courseId,
+          link,
+          type,
+          duration,
         },
         { new: true, runValidators: true }
       );

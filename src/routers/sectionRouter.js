@@ -2,6 +2,7 @@ const express = require("express");
 const SectionControllers = require("../controllers/sectionController");
 const { routeProtector } = require("../middlewares/routeProtector");
 const { allowTo } = require("../middlewares/roleFilter");
+const upload = require("../middlewares/fileUpload");
 
 const sectionRouter = express.Router();
 
@@ -33,6 +34,7 @@ sectionRouter
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),
+    upload("sectionPhoto", 1).single("image"),
     SectionControllers.uploadPhoto
   );
 

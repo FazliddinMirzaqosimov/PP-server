@@ -26,7 +26,7 @@ courseRouter
   .patch(routeProtector, allowTo("admin", "superadmin"), CourseControllers.edit)
   .get(CourseControllers.get);
 
-courseRouter
+  courseRouter
   .route("/upload-photo/:id")
   .post(
     routeProtector,
@@ -34,5 +34,15 @@ courseRouter
     upload("coursePhoto", 1).single("image"),
     CourseControllers.uploadPhoto
   );
+
+  courseRouter
+  .route("/add-trailer/:id")
+  .post(
+    routeProtector,
+    allowTo("admin", "superadmin"),
+    CourseControllers.addTrailer
+  );
+
+
 
 module.exports = courseRouter;

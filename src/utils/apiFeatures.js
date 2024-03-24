@@ -12,7 +12,9 @@ class APIFeatures {
     excludedFields.forEach((el) => delete queryObj[el]);
 
     for (const field of Object.keys(queryObj)) {
-      modelFields.includes(field) || delete queryObj[field];
+      if (!modelFields.includes(field) || !queryObj[field]) {
+        delete queryObj[field];
+      }
     }
     // 1B) Advanced filtering
     let queryStr = JSON.stringify(queryObj);

@@ -21,7 +21,8 @@ class PlanControllers {
         meta: {
           length: plans.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,total
+          page: req.query.page || 1,
+          total,
         },
         status: 200,
       });
@@ -33,7 +34,7 @@ class PlanControllers {
   // Create plan
   static create = async (req, res) => {
     try {
-      const { duration, description, price, title, image, advantages, order } =
+      const { duration, description, price, title, color, advantages, order } =
         req.body;
 
       const plan = await Plan.create({
@@ -41,7 +42,7 @@ class PlanControllers {
         price,
         title,
         duration,
-        image,
+        color,
         advantages,
         order,
       });
@@ -80,12 +81,12 @@ class PlanControllers {
     try {
       const id = req.params.id;
 
-      const { duration, description, price, title, image, advantages, order } =
+      const { duration, description, price, title, color, advantages, order } =
         req.body;
 
       const plan = await Plan.findByIdAndUpdate(
         id,
-        { duration, description, price, title, image, advantages, order },
+        { duration, description, price, title, color, advantages, order },
         { new: true, runValidators: true }
       );
       sendSucces(res, { data: { plan }, status: 200 });

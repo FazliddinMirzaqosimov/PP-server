@@ -19,9 +19,9 @@ exports.FILE_URL = process.env.FILE_URL;
 exports.BUCKET_FOLDER_NAME = process.env.BUCKET_FOLDER_NAME;
 exports.NODE_ENVIRONMENT = process.env.NODE_ENVIRONMENT;
 exports.BOT_TOKEN = process.env.BOT_TOKEN;
-exports.ADMINS_TGIDS = process.env.ADMINS_TGIDS ? process.env.ADMINS_TGIDS.split(",")  : [];
-
-
+exports.ADMINS_TGIDS = process.env.ADMINS_TGIDS
+  ? process.env.ADMINS_TGIDS.split(",")
+  : [];
 
 //website roles
 exports.ROLES = ["user", "admin", "superadmin"];

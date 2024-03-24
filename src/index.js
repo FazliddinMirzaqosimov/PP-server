@@ -12,10 +12,13 @@ mongoose.connect(DB).then(() => {
  
 
 if (NODE_ENVIRONMENT === "development") {
-  bot.launch();
+  bot.launch().then(console.log).catch(console.log);
+  // console.log("Bot is running in local");
 } else {
   bot.telegram.setWebhook(`${API_URL}/bot`);
   app.use(bot.webhookCallback("/bot"));
+  // console.log("Bot is running in production");
+
 }
 
 app.listen(PORT, () => {
