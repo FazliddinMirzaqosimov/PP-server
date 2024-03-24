@@ -5,3 +5,5 @@ node_modules
 index.html
 
 src/swagger/swagger.json
+
+uploads

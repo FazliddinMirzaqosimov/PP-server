@@ -51,25 +51,26 @@ class UserControllers {
   static uploadPhoto = async (req, res) => {
     try {
       const user = req.user;
+
       if (user.profileImage) {
         const file = await File.findByIdAndUpdate(
           user.profileImage,
           {
-            filename: req.file.key,
+            filename: req.file.filename,
             size: req.file.size,
-            location: req.file.location || `${FILE_URL}/${req.file.key}`,
+            location: req.uploadPath,
           },
           {
             upsert: true, // Create a new document if no document is found
           }
         );
 
-        file?.filename && deleteFile(file.filename);
+        file?.location && deleteFile(file.location);
       } else {
         const file = await File.create({
-          filename: req.file.key,
+          filename: req.file.filename,
           size: req.file.size,
-          location: req.file.location || `${FILE_URL}/${req.file.key}`,
+          location: req.uploadPath,
         });
 
         user.profileImage = file._id;

@@ -73,20 +73,20 @@ class CourseControllers {
         const file = await File.findByIdAndUpdate(
           course.image,
           {
-            filename: req.file.key,
+            filename: req.file.filename,
             size: req.file.size,
-            location: req.file.location || `${FILE_URL}/${req.file.key}`,
+            location: req.uploadPath,
           },
           {
             upsert: true, // Create a new document if no document is found
           }
         );
-        file?.filename && deleteFile(file.filename);
+        file?.location && deleteFile(file.location);
       } else {
         const file = await File.create({
-          filename: req.file.key,
+          filename: req.file.filename,
           size: req.file.size,
-          location: req.file.location || `${FILE_URL}/${req.file.key}`,
+          location: req.uploadPath,
         });
 
         course.image = file._id;
@@ -107,7 +107,12 @@ class CourseControllers {
     try {
       const id = req.params.id;
 
-      const course = await Course.findById(id).populate("image");
+      const course = await Course.findById(id).populate([
+        "image",
+        { path: "trailer",
+      // select: "link type"
+      },
+      ]);
       sendSucces(res, { status: 200, data: { course } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });

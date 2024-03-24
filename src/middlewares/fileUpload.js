@@ -1,34 +1,37 @@
-const {
-  BUCKET_NAME,
-  BUCKET_FOLDER_NAME,
-  imageExtensions,
-} = require("../shared/const");
+const fs = require("fs");
 const multer = require("multer");
-const multerS3 = require("multer-s3");
-const { s3 } = require("../utils/s3");
+const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
 const upload = (folderName, mb = 0.4) => {
-  const multerStorage = multerS3({
-    s3,
-    bucket: BUCKET_NAME,
-    acl: "public-read",
-    metadata: function (req, file, cb) {
-      cb(null, { fieldname: file.fieldname });
-    },
-    key: function (req, file, cb) {
-      const fileNameList = file.originalname.split(".");
-      const extension = fileNameList[fileNameList.length - 1];
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      if (!req?.user?._id) {
+        cb("Cannot find user!");
+      }
+      const uploadPath = `/uploads/${folderName}`;
+      const dir = path.join(__dirname, `../..${uploadPath}`);
 
-      cb(
-        imageExtensions.includes(extension) ? null : "Should be image!",
-        `${BUCKET_FOLDER_NAME}/${folderName}/${uuidv4()}.${extension}`
-      );
+      req.uploadPath = uploadPath;
+      fs.mkdir(dir, { recursive: true }, (err) => {
+        if (err) {
+          cb("Cannot create folder!");
+          return;
+        }
+        cb(null, dir);
+      });
+    },
+    filename: function (req, file, cb) {
+      const fileName = file.originalname.split(".");
+      const extension = fileName[fileName.length - 1];
+      const name = `${uuidv4()}.${extension}`;
+      req.uploadPath = `${req.uploadPath}/${name}`;
+      cb(null, name);
     },
   });
 
   return multer({
-    storage: multerStorage,
+    storage: storage,
     limits: { fileSize: mb * 1024 * 1024 },
   });
 };

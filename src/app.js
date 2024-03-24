@@ -32,19 +32,21 @@ app.set("view engine", "ejs");
 
 // Specify the directory where your EJS files are located
 app.set("views", path.join(__dirname, "views"));
-app.use("/public",express.static(path.join(__dirname, "..", "public")));
+app.use("/public",express.static(path.join(__dirname, "../public")));
+app.use("/uploads",express.static(path.join(__dirname, "../uploads")));
 
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/v1/file", fileRouter);
 app.use("/api/v1/progress", progressRouter);
-app.use("/api/v1/purchase-request", purchaseRequestRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/course", courseRouter);
 app.use("/api/v1/course-section", sectionRouter);
 app.use("/api/v1/video", videoRouter);
-app.use("/api/v1/purchase", purchaseRouter);
-app.use("/api/v1/plan", planRouter);
+//next version
+// app.use("/api/v1/purchase-request", purchaseRequestRouter);
+// app.use("/api/v1/purchase", purchaseRouter);
+// app.use("/api/v1/plan", planRouter);
 
 module.exports = app;

@@ -4,12 +4,12 @@ const app = require("./app");
 const mongoose = require("mongoose");
 const { PORT, DB, API_URL, NODE_ENVIRONMENT } = require("./shared/const");
 const bot = require("./bot");
+const fs = require("fs");
+const User = require("./models/userModel");
 
 mongoose.connect(DB).then(() => {
   console.log("Database connected");
 });
-
- 
 
 if (NODE_ENVIRONMENT === "development") {
   bot.launch().then(console.log).catch(console.log);
@@ -18,9 +18,14 @@ if (NODE_ENVIRONMENT === "development") {
   bot.telegram.setWebhook(`${API_URL}/bot`);
   app.use(bot.webhookCallback("/bot"));
   // console.log("Bot is running in production");
-
 }
+
 
 app.listen(PORT, () => {
   console.log("Server is running in port - " + PORT);
 });
+// User.create({
+//   email:"fazliddinmirzaqosimov8@gmail.com",
+//   role:"superadmin",
+//   password:"1212qwqw",
+// })

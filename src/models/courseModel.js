@@ -19,8 +19,7 @@ const courseSchema = new mongoose.Schema(
     },
     chat: {
       type: String,
-      required: [true, "Chat is required"],
-    },
+     },
     type: {
       type: String,
       enum: ["free", "premium"],
@@ -33,7 +32,7 @@ const courseSchema = new mongoose.Schema(
     },
     trailer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Trailer",
+      ref: "Video",
     },
   },
   {

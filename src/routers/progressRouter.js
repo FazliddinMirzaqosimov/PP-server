@@ -5,7 +5,7 @@ const ProgressControllers = require("../controllers/progressController");
 
 const progressRouter = express.Router();
 
-progressRouter.route("/section").get(routeProtector, ProgressControllers.get);
+progressRouter.route("/:sectionId").get(routeProtector, ProgressControllers.get);
 progressRouter
   .route("/next-video")
   .post(routeProtector, ProgressControllers.nextVideo);

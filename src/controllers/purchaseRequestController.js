@@ -69,7 +69,7 @@ class PurchaseRequestController {
 
       const file = await File.findByIdAndDelete(purchaseRequest.file);
 
-      deleteFile(file.filename);
+      deleteFile(file.location);
 
       sendSucces(res, { status: 204 });
     } catch (error) {
@@ -243,7 +243,7 @@ class PurchaseRequestController {
       }).sort("-createdAt");
 
       if (latestRequestsIn24.length >= 3) {
-        deleteFile(req.file.key);
+        deleteFile(req.uploadPath);
         return sendError(res, {
           error: `3 purchases request allowed in 1 day!  ${twentyFourHoursAgo.toISOString()} ${latestRequestsIn24[0].createdAt.toISOString()}`,
           status: 404,

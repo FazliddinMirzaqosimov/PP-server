@@ -119,8 +119,8 @@ class VideoControllers {
   static get = async (req, res) => {
     try {
       const id = req.params.id;
-
       const video = await Video.findById(id);
+      console.log({video,id,w:"6600173830f80a688658a10e"});
       sendSucces(res, { status: 200, data: { video } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });

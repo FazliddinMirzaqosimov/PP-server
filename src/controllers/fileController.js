@@ -41,7 +41,7 @@ class FileControllers {
   static async delete(req, res) {
     try {
       const file = await File.findByIdAndDelete(req.params.id);
-      deleteFile(file.filename);
+      deleteFile(file.location);
 
       sendSucces(res, { data: { file }, status: 204 });
     } catch (error) {
@@ -49,25 +49,7 @@ class FileControllers {
     }
   }
 
-  static async create(req, res) {
-    try {
-      const files = req.files.map((file) => {
-        return {
-          filename: file.key,
-          size: file.size,
-          location: file.location || `${FILE_URL}/${file.key}`,
-        };
-      });
-      const file = await File.insertMany(files);
-      sendSucces(res, { data: { file }, status: 201 });
-    } catch (error) {
-      req.files?.forEach((media) => {
-        deleteFile(media.key);
-      });
-
-      sendError(res, { error: error.message, status: 404 });
-    }
-  }
+   
 }
 
 module.exports = FileControllers;

@@ -29,7 +29,7 @@ exports.routeProtector = async (req, res, next) => {
     if (!user) {
       return sendError(res, { error: "User not found", status: 404 });
     }
-    if (!user.verifiedAt) {
+    if (!user.verifiedAt  && !["admin",'superadmin'].includes(user.role)) {
       return sendError(res, {
         error: "You are not verified!",
         status: 404,
