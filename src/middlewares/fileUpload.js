@@ -15,7 +15,7 @@ const upload = (folderName, mb = 0.4) => {
       req.uploadPath = uploadPath;
       fs.mkdir(dir, { recursive: true }, (err) => {
         if (err) {
-          cb("Cannot create folder!");
+          cb(err);
           return;
         }
         cb(null, dir);
