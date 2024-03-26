@@ -315,7 +315,9 @@ class UserControllers {
         });
       }
 
-      await req.user.updateOne({ $push: { startedCourses: courseId } });
+      await req.user.updateOne({
+        $push: { startedCourses: { $each: [courseId], $position: 0 } },
+      });
 
       sendSucces(res, { data: "Course successfully added!", status: 200 });
     } catch (error) {
