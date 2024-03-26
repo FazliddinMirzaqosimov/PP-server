@@ -38,7 +38,8 @@ class UserControllers {
         meta: {
           length: users.length,
           limit: req.query.limit || 100,
-          page: req.query.page || 1,total
+          page: req.query.page || 1,
+          total,
         },
         status: 200,
       });
@@ -174,19 +175,17 @@ class UserControllers {
   //get profile of user
   static getProfile = async (req, res) => {
     try {
-      let user = req.user.profileImage
-        ? await User.findById(req.user._id)
-            .populate("profileImage")
-            .populate({
-              path: "startedCourses",
-              select: "_id image", // Replace field1, field2, field3 with the actual fields you want to include
-              populate: {
-                path: "image",
-                model: "File", // Assuming "File" is the name of the model referencing images
-                select: "location -_id", // Replace field1, field2, field3 with the actual fields you want to include
-              },
-            })
-        : req.user;
+      let user = await User.findById(req.user._id)
+        .populate("profileImage")
+        .populate({
+          path: "startedCourses",
+          select: "_id image", // Replace field1, field2, field3 with the actual fields you want to include
+          populate: {
+            path: "image",
+            model: "File", // Assuming "File" is the name of the model referencing images
+            select: "location -_id", // Replace field1, field2, field3 with the actual fields you want to include
+          },
+        });
 
       const balance = await getUserBalance(user._id);
       const lastPurchase = await Purchase.findOne({

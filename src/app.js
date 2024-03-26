@@ -9,11 +9,11 @@ const courseRouter = require("./routers/courseRouter");
 const videoRouter = require("./routers/videoRouter");
 const purchaseRouter = require("./routers/purchaseRouter");
 const planRouter = require("./routers/planRouter");
+const purchaseRequestRouter = require("./routers/purchaseRequestRouter");
 const corsOptions = require("./shared/cors");
 const sectionRouter = require("./routers/sectionRouter");
 const progressRouter = require("./routers/progressRouter");
 const fileRouter = require("./routers/fileRouter");
-const purchaseRequestRouter = require("./routers/purchaseRequestRouter");
 const { NODE_ENVIRONMENT } = require("./shared/const");
 const path = require("path");
 
