@@ -120,7 +120,7 @@ class VideoControllers {
     try {
       const id = req.params.id;
       const video = await Video.findById(id);
-      console.log({video,id,w:"6600173830f80a688658a10e"});
+      console.log({ video, id, w: "6600173830f80a688658a10e" });
       sendSucces(res, { status: 200, data: { video } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -132,8 +132,20 @@ class VideoControllers {
     try {
       const id = req.params.id;
 
+      const video = await Video.findById(id).sort({ order: -1 });
+      if (!video?.order) {
+        return sendError(res, { error: "Video topilmadi", status: 404 });
+      }
+      const videoOrder = video.order;
+
+      await Video.updateMany(
+        { sectionId: video.sectionId, order: { $gt: video.order } },
+        { $inc: { order: -1 } }
+      );
+
       await Video.findByIdAndDelete(id);
-      sendSucces(res, { status: 204 });
+  
+      return sendSucces(res, { status: 204 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }

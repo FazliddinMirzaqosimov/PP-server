@@ -5,6 +5,7 @@ const Course = require("../models/courseModel");
 const File = require("../models/fileModel");
 const { deleteFile } = require("../utils/s3/deleteFile");
 const Video = require("../models/videoModel");
+const Section = require("../models/sectionModel");
 
 class CourseControllers {
   // Get all course list
@@ -148,7 +149,11 @@ class CourseControllers {
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
+      const section = await Section.findOne({courseId:id});
+if (section) {
+  return       sendError(res, { error: "Kursda Section mavjud!", status: 404 });
 
+}
       await Course.findByIdAndDelete(id);
       sendSucces(res, { status: 204 });
     } catch (error) {

@@ -6,6 +6,7 @@ const Progress = require("../models/progressModel");
 const { deleteFile } = require("../utils/s3/deleteFile");
 const File = require("../models/fileModel");
 const { FILE_URL } = require("../shared/const");
+const Video = require("../models/videoModel");
 
 class SectionControllers {
   // Get all section
@@ -152,7 +153,13 @@ class SectionControllers {
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
-
+      const video = await Video.findOne({ sectionId: id });
+      if (video) {
+        return sendError(res, {
+          error: "Sectionda video mavjud!",
+          status: 404,
+        });
+      }
       await Section.findByIdAndDelete(id);
       sendSucces(res, { status: 204 });
     } catch (error) {
