@@ -273,7 +273,7 @@ class PurchaseRequestController {
               [
                 {
                   text: "Open Link",
-                  web_app: { url: "https://fazliddin.dev" },
+                  web_app: { url: "https://nextech.uz" },
                 },
                 { text: "Press Me", callback_data: "press" },
               ],

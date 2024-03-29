@@ -21,10 +21,10 @@ function sendMail(options) {
 
 exports.sendRegisterEmail = (link, to) => {
   const options = {
-    from: '"fazliddin.dev Platformasi" <foo@example.com>',
+    from: '"nextech.uz Platformasi" <foo@example.com>',
     to: to,
     subject: "Dunyoni zabt qilish vaqti keldi!",
-    html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
+    html: `Nextech ni tanlaganingiz uchun tashakkur! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
     <br/>
     <br/> 
     <a href="${link}">
@@ -44,11 +44,11 @@ exports.sendRegisterEmail = (link, to) => {
   <br/>
   <br/>
 
-    Bu link sizga <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> platformasida akkaunt ochishingiz uchun jo'natildi. Agar platformadan ro'yxatdan o'tish niyyatingiz bo'lmasa emailga ahamiyat bermang!
+    Bu link sizga <a href="https://nextech.uz"> <b>Nextech</b></a> platformasida akkaunt ochishingiz uchun jo'natildi. Agar platformadan ro'yxatdan o'tish niyyatingiz bo'lmasa emailga ahamiyat bermang!
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
+    <a href="https://nextech.uz"> <b>Nextech</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
     <br/>
     <br/>
 
@@ -56,22 +56,22 @@ exports.sendRegisterEmail = (link, to) => {
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasiga xush kelibsiz!
+    <a href="https://nextech.uz"> <b>Nextech</b></a> jamoasiga xush kelibsiz!
     <br/>
     <br/>
 
     Eng yaxshi ezgu tilaklar bilan,
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasi`,
+    <a href="https://nextech.uz"> <b>Nextech</b></a> jamoasi`,
   };
   return sendMail(options);
 };
 
 exports.sendUpdateEmailCode = (code, to) => {
   const options = {
-    from: '"fazliddin.dev Platformasi" <foo@example.com>',
+    from: '"nextech.uz Platformasi" <foo@example.com>',
     to: to,
     subject: "Emailingizni o'zgartirish kodi!",
-    html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
+    html: `Nextechni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Roʻyxatdan oʻtishni yakunlash uchun quyidagi tugmani bosing:
     <br/>
     <br/> 
     <div style="padding: 30px; text-align: center">
@@ -95,11 +95,11 @@ exports.sendUpdateEmailCode = (code, to) => {
   <br/>
   <br/>
 
-    Bu link sizga <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> platformasida emailingizni yangilash uchun jo'natildi. Agar emailingizni o'zgartirish niyyatingiz bo'lmasa xabarimizga ahamiyat bermang!
+    Bu link sizga <a href="https://nextech.uz"> <b>Nextech</b></a> platformasida emailingizni yangilash uchun jo'natildi. Agar emailingizni o'zgartirish niyyatingiz bo'lmasa xabarimizga ahamiyat bermang!
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
+    <a href="https://nextech.uz"> <b>Nextech</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
     <br/>
     <br/>
 
@@ -107,12 +107,12 @@ exports.sendUpdateEmailCode = (code, to) => {
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>  jamoasiga xush kelibsiz!
+    <a href="https://nextech.uz"> <b>Nextech</b></a>  jamoasiga xush kelibsiz!
     <br/>
     <br/>
 
     Eng yaxshi ezgu tilaklar bilan,
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasi`,
+    <a href="https://nextech.uz"> <b>Nextech</b></a> jamoasi`,
   };
   return sendMail(options);
 };
@@ -120,10 +120,10 @@ exports.sendUpdateEmailCode = (code, to) => {
 
 exports.sendNewPasswordCode = (code, to) => {
   const options = {
-    from: '"fazliddin.dev Platformasi" <foo@example.com>',
+    from: '"nextech.uz Platformasi" <foo@example.com>',
     to: to,
     subject: "Parolingizni yangilash kodi!",
-    html: `Fazliddin.dev ni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Parolni o'zgartirish uchun quyidagi tugmani bosing:
+    html: `nextech.uz ni tanlaganingiz uchun tashakkur. Sizni kemada borligimizdan xursandmiz! Parolni o'zgartirish uchun quyidagi tugmani bosing:
     <br/>
     <br/> 
     <div style="padding: 30px; text-align: center">
@@ -147,11 +147,11 @@ exports.sendNewPasswordCode = (code, to) => {
   <br/>
   <br/>
 
-    Bu link sizga <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> platformasida parolingizni yangilash uchun jo'natildi. Agar parolingizni o'zgartirish niyyatingiz bo'lmasa xabarimizga ahamiyat bermang!
+    Bu link sizga <a href="https://nextech.uz"> <b>Nextech</b></a> platformasida parolingizni yangilash uchun jo'natildi. Agar parolingizni o'zgartirish niyyatingiz bo'lmasa xabarimizga ahamiyat bermang!
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
+    <a href="https://nextech.uz"> <b>Nextech</b></a>   saytida biz sizning ehtiyojlaringizga moslashtirilgan uzluksiz o‘rganish tajribasini taqdim etishga intilamiz. Turli kurslarni o'rganing, hamjamiyatimiz bilan aloqa o'rnating va bilim olamini oching.
     <br/>
     <br/>
 
@@ -159,12 +159,12 @@ exports.sendNewPasswordCode = (code, to) => {
     <br/>
     <br/>
 
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a>  jamoasiga xush kelibsiz!
+    <a href="https://nextech.uz"> <b>Nextech</b></a>  jamoasiga xush kelibsiz!
     <br/>
     <br/>
 
     Eng yaxshi ezgu tilaklar bilan,
-    <a href="https://fazliddin.dev"> <b>Fazliddin.dev</b></a> jamoasi`,
+    <a href="https://nextech.uz"> <b>Nextech</b></a> jamoasi`,
   };
   return sendMail(options);
 };

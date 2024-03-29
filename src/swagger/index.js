@@ -2,7 +2,7 @@ const swaggerAutogen = require("swagger-autogen")();
 
 const doc = {
   info: {
-    title: "Fazliddin.dev",
+    title: "Nextech.uz",
     description: "Description",
   },
   host: "localhost:8888",
