@@ -46,7 +46,7 @@ class ProgressControllers {
 
       if (lastVideoOrder <= currentVideoOrder) {
         return sendError(res, {
-          error: "You are done this section!",
+          error: "Siz bu seksiyani tugatdingiz!",
           status: 404,
         });
       }

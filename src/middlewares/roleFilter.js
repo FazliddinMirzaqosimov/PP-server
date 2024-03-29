@@ -6,7 +6,7 @@ exports.allowTo =
     try {
       if (!roles.includes(req.user.role)) {
         return sendError(res, {
-          error: "You are not authorized to this path",
+          error: "Bu yerga siz uchun ruxsat yo'q",
           status: 403,
         });
       }
@@ -23,7 +23,7 @@ exports.rejectTo =
     try {
       if (roles.includes(req.user.role)) {
         return sendError(res, {
-          error: "You are not authorized to this path",
+          error: "Bu yerga siz uchun ruxsat yo'q",
           status: 403,
         });
       }

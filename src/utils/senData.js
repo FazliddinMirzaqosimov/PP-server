@@ -3,7 +3,7 @@ const { ADMINS_TGIDS } = require("../shared/const");
 
 exports.sendError = (
   res,
-  { error = "Somthing went wrong", status = 404, type = "json" }
+  { error = "Xatolik yuz berdi", status = 404, type = "json" }
 ) => {
   res
     .status(status)

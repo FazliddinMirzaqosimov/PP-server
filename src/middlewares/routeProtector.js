@@ -16,7 +16,7 @@ exports.routeProtector = async (req, res, next) => {
     }
 
     if (!token) {
-      return sendError(res, { error: "You are not logged in", status: 401 });
+      return sendError(res, { error: "Siz tizimga kirmagansiz", status: 401 });
     }
 
      const { id } = await util.promisify(jwt.verify)(
@@ -27,11 +27,11 @@ exports.routeProtector = async (req, res, next) => {
     const user = await User.findById(id).select("+password") ;
 
     if (!user) {
-      return sendError(res, { error: "User not found", status: 404 });
+      return sendError(res, { error: "Foydalanuvchi topilmadi", status: 404 });
     }
     if (!user.verifiedAt  && !["admin",'superadmin'].includes(user.role)) {
       return sendError(res, {
-        error: "You are not verified!",
+        error: "Siz tasdiqlanmagansiz!",
         status: 404,
       });
     }

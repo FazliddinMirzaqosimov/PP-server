@@ -2,13 +2,13 @@ exports.passwordValidator = (password) => {
   if (!password) {
     return {
       isValid: false,
-      message: "Password is not defined!",
+      message: "Parol topilmadi!",
     };
   }
   if (String(password).length < 8) {
     return {
       isValid: false,
-      message: "Password must be at least 8 character long",
+      message: "Parol kamida 8 harakterdan iborat bo'lishi kerak",
     };
   }
   return {

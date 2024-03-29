@@ -9,12 +9,19 @@ const courseRouter = express.Router();
 
 courseRouter
   .route("/")
-  .get(CourseControllers.getAll)
+  .get(routeProtector,CourseControllers.getAll)
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),
     CourseControllers.create
   );
+
+
+
+courseRouter
+  .route("/no-auth")
+  .get(CourseControllers.getAll)
+
 
 courseRouter
   .route("/:id")
@@ -24,7 +31,7 @@ courseRouter
     CourseControllers.delete
   )
   .patch(routeProtector, allowTo("admin", "superadmin"), CourseControllers.edit)
-  .get(CourseControllers.get);
+  .get(routeProtector,CourseControllers.get);
 
   courseRouter
   .route("/upload-photo/:id")

@@ -8,7 +8,9 @@ class VideoControllers {
   static getAll = async (req, res) => {
     try {
       const videoQuery = new APIFeatures(
-        Video.find().populate([
+        Video.find(
+          !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
+        ).populate([
           {
             path: "courseId",
             select: "title",
@@ -55,6 +57,7 @@ class VideoControllers {
         courseId,
         sectionId,
         order,
+        status,
       } = req.body;
 
       const section = await Section.findOne({
@@ -62,7 +65,7 @@ class VideoControllers {
         courseId,
       });
       if (!section) {
-        return sendError(res, { error: "Section is not found!", status: 404 });
+        return sendError(res, { error: "Seksiya topilmadi!", status: 404 });
       }
 
       const lastVideo = await Video.findOne({
@@ -74,10 +77,13 @@ class VideoControllers {
       if (!order) {
         order = lastVideoOrder + 1;
       } else if (!Number.isInteger(order)) {
-        return sendError(res, { error: "Order must be integer!", status: 404 });
+        return sendError(res, {
+          error: "Order raqam bo'lishi kerak!",
+          status: 404,
+        });
       } else if (order < 0) {
         return sendError(res, {
-          error: "Order must be greater then 0!",
+          error: "Order 0dan katta bo'lishi kerak!",
           status: 404,
         });
       } else if (order > lastVideoOrder + 1) {
@@ -93,8 +99,7 @@ class VideoControllers {
 
       if (existVideo) {
         return sendError(res, {
-          error:
-            "Video with this order is already exist in this course section!",
+          error: "Bu seksiyada shunday order dagi video mavjud!",
           status: 404,
         });
       }
@@ -108,6 +113,7 @@ class VideoControllers {
         order,
         type,
         courseId,
+        status,
       });
       sendSucces(res, { data: { video }, status: 200 });
     } catch (error) {
@@ -119,7 +125,11 @@ class VideoControllers {
   static get = async (req, res) => {
     try {
       const id = req.params.id;
-      const video = await Video.findById(id);
+      const video = await Video.findOne(
+        !req?.user?.role || req.user.role === "user"
+          ? { status: 1, _id: id }
+          : { _id: id }
+      );
       console.log({ video, id, w: "6600173830f80a688658a10e" });
       sendSucces(res, { status: 200, data: { video } });
     } catch (error) {
@@ -144,7 +154,7 @@ class VideoControllers {
       );
 
       await Video.findByIdAndDelete(id);
-  
+
       return sendSucces(res, { status: 204 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -156,8 +166,16 @@ class VideoControllers {
     try {
       const id = req.params.id;
 
-      let { title, description, sectionId, courseId, link, type, duration } =
-        req.body;
+      let {
+        title,
+        description,
+        sectionId,
+        courseId,
+        link,
+        type,
+        duration,
+        status,
+      } = req.body;
 
       const video = await Video.findByIdAndUpdate(
         id,
@@ -169,6 +187,7 @@ class VideoControllers {
           link,
           type,
           duration,
+          status,
         },
         { new: true, runValidators: true }
       );

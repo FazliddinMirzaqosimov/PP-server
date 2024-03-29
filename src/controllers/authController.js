@@ -60,7 +60,7 @@ class AuthControllers {
 
       if (!email || !password) {
         return sendError(res, {
-          error: "Please provide both password and email",
+          error: "Iltimos parol yoki emailni kiriting!",
           status: 404,
         });
       }
@@ -69,20 +69,20 @@ class AuthControllers {
       );
       if (!user) {
         return sendError(res, {
-          error: "Email not found",
+          error: "Email topilmadi",
           status: 404,
         });
       }
       if (!user.verifiedAt  && !["admin",'superadmin'].includes(user.role)) {
         return sendError(res, {
-          error: "You are not verified!",
+          error: "Siz tasdiqlanmagansiz!",
           status: 404,
         });
       }
 
       if (!(await user.comparePasswords(password))) {
         return sendError(res, {
-          error: "Wrong password",
+          error: "Xato parol",
           status: 404,
         });
       }
@@ -104,14 +104,14 @@ class AuthControllers {
       let user = await User.findById(id);
       if (!user) {
         return sendError(res, {
-          error: "You did something shady!",
+          error: "NImadir xato qildingiz!",
           type: "send",
           status: 404,
         });
       }
       if (user.verifiedAt) {
         return sendError(res, {
-          error: "Your email already verified!",
+          error: "Sizning emailingiz allaqachon tasdiqlangan!",
           type: "send",
           status: 200,
         });
@@ -141,7 +141,7 @@ class AuthControllers {
 
       if (newPassword === oldPassword) {
         return sendError(res, {
-          error: "New password cannot be equal to old password",
+          error: "Yangi parol eskisi bilan bir xil bo'lmasligi kerak!",
           status: 404,
         });
       }
@@ -158,13 +158,13 @@ class AuthControllers {
 
       if (!(await user.comparePasswords(oldPassword))) {
         return sendError(res, {
-          error: "Wrong password",
+          error: "Xato parol",
           status: 404,
         });
       }
       user.password = newPassword;
       await user.save();
-      sendSucces(res, { data: "Password updated!", status: 200 });
+      sendSucces(res, { data: "Parol yangilandi!", status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }
@@ -176,13 +176,13 @@ class AuthControllers {
 
       if (!newEmail) {
         return sendError(res, {
-          error: "newEmail is required!",
+          error: "Yangi emailni kiritish majburiy!",
           status: 400,
         });
       }
       if (req.user.email === newEmail) {
         return sendError(res, {
-          error: "You cant change your email to your current email!",
+          error: "Yangi email eski emailga teng bo'la olmaydi!",
           status: 400,
         });
       }
@@ -190,7 +190,7 @@ class AuthControllers {
       // console.log(userWithNewEmail);
       if (userWithNewEmail) {
         return sendError(res, {
-          error: "Email already exist!",
+          error: "Email allaqachon ro'yxatdan o'tgan!",
           status: 409,
         });
       }
@@ -221,14 +221,14 @@ class AuthControllers {
 
       if (!code) {
         return sendError(res, {
-          error: "code is required!",
+          error: "Kodni kiritish majburiy!",
           status: 400,
         });
       }
       const user = req.user;
       if (code != user.newEmailCode) {
         return sendError(res, {
-          error: "code didnt match!",
+          error: "Kod mos kelmadi!",
           status: 400,
         });
       }
@@ -237,7 +237,7 @@ class AuthControllers {
       user.newEmailCode = undefined;
       await user.save();
       sendSucces(res, {
-        data: `Your email successfully changed`,
+        data: `Emailingiz muvoffaqiyatli o'zgartirildi`,
         status: 200,
       });
     } catch (error) {
@@ -251,7 +251,7 @@ class AuthControllers {
       const { email, newPassword } = req.body;
       if (!email) {
         return sendError(res, {
-          error: "Email is required!",
+          error: "Emailni kiritish majburiy!",
           status: 400,
         });
       }
@@ -266,7 +266,7 @@ class AuthControllers {
 
       if (!user) {
         return sendError(res, {
-          error: "User not found with this email!",
+          error: "Foydalanuvchi topilmadi!",
           status: 400,
         });
       }
@@ -296,7 +296,7 @@ class AuthControllers {
 
       if (!code) {
         return sendError(res, {
-          error: "code is required!",
+          error: "Kodni kiritish majburiy!",
           status: 400,
         });
       }
@@ -304,7 +304,7 @@ class AuthControllers {
 
       if (code != user.newPasswordCode) {
         return sendError(res, {
-          error: "code didnt match!",
+          error: "Kod mos kelmadi!",
           status: 400,
         });
       }

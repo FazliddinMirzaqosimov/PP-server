@@ -12,7 +12,9 @@ class CourseControllers {
   static getAll = async (req, res) => {
     try {
       const coursesQuery = new APIFeatures(
-        Course.find().populate("image"),
+        Course.find(
+          !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
+        ).populate("image"),
         req.query
       )
         .sort()
@@ -41,7 +43,16 @@ class CourseControllers {
   // Create course
   static create = async (req, res) => {
     try {
-      const { chat, title, description, type, user } = req.body;
+      const {
+        chat,
+        title,
+        description,
+        type,
+        user,
+        priority,
+        teacherName,
+        status,
+      } = req.body;
       const userId = req.user._id || user;
 
       const course = await Course.create({
@@ -50,6 +61,9 @@ class CourseControllers {
         description,
         userId,
         type,
+        priority,
+        teacherName,
+        status,
       });
 
       sendSucces(res, { data: { course }, status: 200 });
@@ -65,7 +79,7 @@ class CourseControllers {
       const course = await Course.findById(courseId);
       if (!course) {
         return sendError(res, {
-          error: "Couldnt find course with this id!",
+          error: "Shu id da kurs topilmadi!",
           status: 404,
         });
       }
@@ -108,11 +122,16 @@ class CourseControllers {
     try {
       const id = req.params.id;
 
-      const course = await Course.findById(id).populate([
+      const course = await Course.findOne(
+        !req?.user?.role || req.user.role === "user"
+          ? { status: 1, _id: id }
+          : { _id: id }
+      ).populate([
         "image",
-        { path: "trailer",
-      // select: "link type"
-      },
+        {
+          path: "trailer",
+          // select: "link type"
+        },
       ]);
       sendSucces(res, { status: 200, data: { course } });
     } catch (error) {
@@ -126,14 +145,14 @@ class CourseControllers {
       const courseId = req.params.id;
       const videoId = req.body.videoId;
 
-      const course = await Course.findById(courseId);
       const video = await Video.findById(videoId);
-
       if (!video) {
-        return sendError(res, { error: "Video not found", status: 404 });
+        return sendError(res, { error: "Video topilmadi", status: 404 });
       }
+
+      const course = await Course.findById(courseId);
       if (!course) {
-        return sendError(res, { error: "Course not found", status: 404 });
+        return sendError(res, { error: "Kurs topilmadi", status: 404 });
       }
 
       course.trailer = videoId;
@@ -149,11 +168,10 @@ class CourseControllers {
   static delete = async (req, res) => {
     try {
       const id = req.params.id;
-      const section = await Section.findOne({courseId:id});
-if (section) {
-  return       sendError(res, { error: "Kursda Section mavjud!", status: 404 });
-
-}
+      const section = await Section.findOne({ courseId: id });
+      if (section) {
+        return sendError(res, { error: "Kursda Section mavjud!", status: 404 });
+      }
       await Course.findByIdAndDelete(id);
       sendSucces(res, { status: 204 });
     } catch (error) {
@@ -166,7 +184,16 @@ if (section) {
     try {
       const id = req.params.id;
 
-      const { chat, title, description, type, image } = req.body;
+      const {
+        chat,
+        title,
+        description,
+        type,
+        image,
+        priority,
+        teacherName,
+        status,
+      } = req.body;
       const userId = req.user._id;
 
       const course = await Course.findByIdAndUpdate(
@@ -178,6 +205,9 @@ if (section) {
           userId,
           image,
           type,
+          priority,
+          teacherName,
+          status,
         },
         { new: true, runValidators: true }
       );

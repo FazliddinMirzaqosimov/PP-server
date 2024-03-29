@@ -19,7 +19,19 @@ const courseSchema = new mongoose.Schema(
     },
     chat: {
       type: String,
-     },
+    },
+    teacherName: {
+      type: String,
+    },
+    priority: {
+      type: Number,
+      default: 10,
+    },
+    status: {
+      type: Number,
+      default: 1,
+      enum: [1, 0],
+    },
     type: {
       type: String,
       enum: ["free", "premium"],

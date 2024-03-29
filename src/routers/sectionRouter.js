@@ -8,7 +8,7 @@ const sectionRouter = express.Router();
 
 sectionRouter
   .route("/")
-  .get(SectionControllers.getAll)
+  .get(routeProtector,SectionControllers.getAll)
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),
@@ -27,7 +27,7 @@ sectionRouter
     allowTo("admin", "superadmin"),
     SectionControllers.edit
   )
-  .get(SectionControllers.get);
+  .get(routeProtector,SectionControllers.get);
 
 sectionRouter
   .route("/upload-photo/:id")

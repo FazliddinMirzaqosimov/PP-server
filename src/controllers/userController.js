@@ -250,18 +250,18 @@ class UserControllers {
       const user = req.user;
 
       if (!planId) {
-        return sendError(res, { error: "planId is required!", status: 404 });
+        return sendError(res, { error: "'planId'ni kiritish mavjud!", status: 404 });
       }
       const plan = await Plan.findById(planId);
       if (!plan) {
-        return sendError(res, { error: "Plan not found!", status: 404 });
+        return sendError(res, { error: "Plan topilmadi!", status: 404 });
       }
 
       const balance = await getUserBalance(user._id);
 
       if (balance < plan.price) {
         return sendError(res, {
-          error: "Your balance is insufficient!",
+          error: "Balansingizda pul kam!",
           status: 404,
         });
       }
@@ -270,7 +270,7 @@ class UserControllers {
 
       if (expirationDate) {
         return sendError(res, {
-          error: `Users' current plan will expire in "${expirationDate}" !`,
+          error: `Foydalanuvchi hozirgi plani "${expirationDate}"da tugaydi !`,
           status: 404,
         });
       }
@@ -299,18 +299,18 @@ class UserControllers {
 
       if (!courseId) {
         return sendError(res, {
-          error: "courseId query not found!",
+          error: "courseId topilmadi!",
           status: 404,
         });
       }
 
       const course = await Course.findById(courseId);
       if (!course) {
-        return sendError(res, { error: "Course not found!", status: 404 });
+        return sendError(res, { error: "Kurs topilmadi!", status: 404 });
       }
       if (req.user.startedCourses.includes(course._id)) {
         return sendError(res, {
-          error: "You already have this course!",
+          error: "Sizda allaqachon bu kurs bor!",
           status: 404,
         });
       }
@@ -332,18 +332,18 @@ class UserControllers {
 
       if (!courseId) {
         return sendError(res, {
-          error: "courseId query not found!",
+          error: "courseId topilmadi!",
           status: 404,
         });
       }
 
       const course = await Course.findById(courseId);
       if (!course) {
-        return sendError(res, { error: "Course not found!", status: 404 });
+        return sendError(res, { error: "Kurs topilmadi!", status: 404 });
       }
       if (!req.user.startedCourses.includes(course._id)) {
         return sendError(res, {
-          error: "You dont have this course!",
+          error: "Sizda bu kurs mavjud emas!",
           status: 404,
         });
       }

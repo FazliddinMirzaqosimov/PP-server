@@ -7,7 +7,7 @@ const upload = (folderName, mb = 0.4) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       if (!req?.user?._id) {
-        cb("Cannot find user!");
+        cb("Foydalanuvchi topilmadi!");
       }
       const uploadPath = `/uploads/${folderName}`;
       const dir = path.join(__dirname, `../..${uploadPath}`);

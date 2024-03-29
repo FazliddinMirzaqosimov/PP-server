@@ -13,10 +13,9 @@ class SectionControllers {
   static getAll = async (req, res) => {
     try {
       const sectionsQuery = new APIFeatures(
-        Section.find().populate([
-          { path: "image" },
-          { path: "courseId", select: "title" },
-        ]),
+        Section.find(
+          !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
+        ).populate([{ path: "image" }, { path: "courseId", select: "title" }]),
         req.query
       )
         .sort()
@@ -45,39 +44,9 @@ class SectionControllers {
   // Create section
   static create = async (req, res) => {
     try {
-      let { order, title, description, image, courseId, userId } = req.body;
+      let { priority, title, description, image, courseId, userId, status } =
+        req.body;
       userId = userId || req.user._id;
-
-      const lastSection = await Section.findOne({
-        courseId,
-      }).sort({ order: -1 });
-      const lastSectionOrder = lastSection?.order || 0;
-
-      if (!order) {
-        order = lastSectionOrder + 1;
-      } else if (!Number.isInteger(order)) {
-        return sendError(res, { error: "Order must be integer!", status: 404 });
-      } else if (order < 0) {
-        return sendError(res, {
-          error: "Order must be greater then 0!",
-          status: 404,
-        });
-      } else if (order > lastSectionOrder + 1) {
-        order = lastSectionOrder + 1;
-      } else {
-        await Section.updateMany(
-          { courseId, order: { $gte: order } },
-          { $inc: { order: 1 } }
-        );
-      }
-      const existSection = await Section.findOne({ order, courseId });
-
-      if (existSection) {
-        return sendError(res, {
-          error: "Section with this order is already exist in this course!",
-          status: 404,
-        });
-      }
 
       const section = await Section.create({
         title,
@@ -85,7 +54,8 @@ class SectionControllers {
         userId,
         image,
         courseId,
-        order,
+        priority,
+        status,
       });
       sendSucces(res, { data: { section }, status: 200 });
     } catch (error) {
@@ -98,7 +68,12 @@ class SectionControllers {
   static get = async (req, res) => {
     try {
       const id = req.params.id;
-      const section = await Section.findById(id).populate("image");
+      const section = await Section.findOne(
+        !req?.user?.role || req.user.role === "user"
+          ? { status: 1, _id: id }
+          : { _id: id }
+      ).populate("image");
+      
       sendSucces(res, { status: 200, data: { section } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
@@ -112,7 +87,7 @@ class SectionControllers {
       const section = await Section.findById(sectionId);
       if (!section) {
         return sendError(res, {
-          error: "Couldnt find section with this id!",
+          error: "Seksiya topilmadi",
           status: 404,
         });
       }
@@ -156,7 +131,7 @@ class SectionControllers {
       const video = await Video.findOne({ sectionId: id });
       if (video) {
         return sendError(res, {
-          error: "Sectionda video mavjud!",
+          error: "Seksiyada video mavjud!",
           status: 404,
         });
       }
@@ -172,7 +147,8 @@ class SectionControllers {
     try {
       const id = req.params.id;
 
-      const { chat, title, description, image, courseId } = req.body;
+      const { chat, title, description, image, courseId, status, priority } =
+        req.body;
       const userId = req.user._id;
 
       const section = await Section.findByIdAndUpdate(
@@ -184,6 +160,8 @@ class SectionControllers {
           userId,
           image,
           courseId,
+          status,
+          priority,
         },
         { new: true, runValidators: true }
       );

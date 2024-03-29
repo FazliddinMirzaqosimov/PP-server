@@ -13,9 +13,14 @@ const sectionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "File",
     },
-    order: { 
+    priority: {
       type: Number,
-      required: [true, "Order is required"],
+      default: 10,
+    },
+    status: {
+      type: Number,
+      default: 1,
+      enum: [1, 0],
     },
     userId: {
       required: [true, "User id is required"],
@@ -36,10 +41,10 @@ const sectionSchema = new mongoose.Schema(
   }
 );
 const Section = mongoose.model("Section", sectionSchema);
-  //  Section.db
-  //   .collection("sections").
-  //   dropIndex("courseId_1_order_1")
-  //   .then(console.log)
-  //   .catch(console.error)
- 
+//  Section.db
+//   .collection("sections").
+//   dropIndex("courseId_1_order_1")
+//   .then(console.log)
+//   .catch(console.error)
+
 module.exports = Section;
