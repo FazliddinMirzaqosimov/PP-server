@@ -12,7 +12,7 @@ class SectionControllers {
   // Get all section
   static getAll = async (req, res) => {
     try {
-      console.log(!req?.user?.role, req.user.role === "user");
+      console.log(req?.user?.role, req.user.role === "user");
       const sectionsQuery = new APIFeatures(
         Section.find(
           !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
