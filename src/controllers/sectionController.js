@@ -12,9 +12,10 @@ class SectionControllers {
   // Get all section
   static getAll = async (req, res) => {
     try {
+      console.log(!req?.user?.role, req.user.role === "user");
       const sectionsQuery = new APIFeatures(
         Section.find(
-          // !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
+          !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
         ).populate([{ path: "image" }, { path: "courseId", select: "title" }]),
         req.query
       )
@@ -73,7 +74,7 @@ class SectionControllers {
           ? { status: 1, _id: id }
           : { _id: id }
       ).populate("image");
-      
+
       sendSucces(res, { status: 200, data: { section } });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
