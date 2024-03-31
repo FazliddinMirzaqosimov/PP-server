@@ -30,8 +30,8 @@ class AuthControllers {
       let user = await User.findOne({ email });
 
       if (user?.verifiedAt) {
-        return sendSucces(res, {
-          data: "Email already verified!",
+        return sendError(res, {
+          error: "Email allaqachon ro'yxatdan o'tgan!",
           status: 404,
         });
       }

@@ -14,7 +14,7 @@ class SectionControllers {
     try {
       const sectionsQuery = new APIFeatures(
         Section.find(
-          !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
+          // !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
         ).populate([{ path: "image" }, { path: "courseId", select: "title" }]),
         req.query
       )
