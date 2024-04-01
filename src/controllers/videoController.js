@@ -8,7 +8,9 @@ class VideoControllers {
   static getAll = async (req, res) => {
     try {
       const videoQuery = new APIFeatures(
-        Video.find().populate([
+        Video.find(
+          !req?.user?.role || req.user.role === "user" ? { status: 1 } : {}
+        ).populate([
           {
             path: "courseId",
             select: "title",
