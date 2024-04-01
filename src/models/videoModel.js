@@ -18,6 +18,11 @@ const videoSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    status: {
+      type: Number,
+      default: 1,
+      enum: [1, 0],
+    },
     duration: {
       type: Number,
     },
