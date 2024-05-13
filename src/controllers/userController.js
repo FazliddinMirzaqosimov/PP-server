@@ -6,7 +6,7 @@ const Purchase = require("../models/purchaseModel");
 const Course = require("../models/courseModel");
 const Plan = require("../models/planModel");
 const { getUserBalance } = require("../utils/getBalance");
-const { FILE_URL } = require("../shared/const");
+const { FILE_URL, ROLES } = require("../shared/const");
 const File = require("../models/fileModel");
 const { deleteFile } = require("../utils/s3/deleteFile");
 const {
@@ -351,6 +351,16 @@ class UserControllers {
       await req.user.updateOne({ $pull: { startedCourses: courseId } });
 
       sendSucces(res, { data: "Course successfully removed", status: 200 });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
+
+  //get all user roles
+  static getAllUserRoles = async (req, res) => {
+    try {
+     
+      sendSucces(res, { data: ROLES, status: 200 });
     } catch (error) {
       sendError(res, { error: error.message, status: 404 });
     }

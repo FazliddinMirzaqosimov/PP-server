@@ -17,10 +17,15 @@ userRouter
   .route("/upload-photo")
   .post(routeProtector,upload("userProfiles").single("image"), UserControllers.uploadPhoto);
 
-userRouter
+  userRouter
   .route("/balance")
   .get(routeProtector, allowTo("superadmin"), UserControllers.getBalance);
-  
+
+
+  userRouter
+  .route("/roles")
+  .get(routeProtector, UserControllers.getAllUserRoles);
+
 userRouter.route("/profile").get(routeProtector, UserControllers.getProfile);
 
 userRouter
