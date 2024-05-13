@@ -11,6 +11,10 @@ videoRouter
   .post(routeProtector, VideoControllers.create);
 
   videoRouter
+  .route("/youtube/list")
+  .post(routeProtector, VideoControllers.createYoutubeList);
+
+  videoRouter
   .route("/:id")
   .delete(routeProtector, VideoControllers.delete)
   .patch(routeProtector, VideoControllers.edit)

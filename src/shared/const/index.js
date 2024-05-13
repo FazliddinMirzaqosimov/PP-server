@@ -20,6 +20,7 @@ exports.BUCKET_FOLDER_NAME = process.env.BUCKET_FOLDER_NAME;
 exports.CORS_URLS = process.env.CORS_URLS;
 exports.NODE_ENVIRONMENT = process.env.NODE_ENVIRONMENT;
 exports.BOT_TOKEN = process.env.BOT_TOKEN;
+exports.YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 exports.ADMINS_TGIDS = process.env.ADMINS_TGIDS
   ? process.env.ADMINS_TGIDS.split(",")
   : [];

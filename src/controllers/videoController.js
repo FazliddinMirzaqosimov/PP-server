@@ -2,6 +2,8 @@ const { sendError, sendSucces } = require("../utils/senData");
 const APIFeatures = require("../utils/apiFeatures");
 const Video = require("../models/videoModel");
 const Section = require("../models/sectionModel");
+const axios = require("axios");
+const getDuration = require("../utils/getDuration");
 
 class VideoControllers {
   // Get all video
@@ -73,7 +75,6 @@ class VideoControllers {
       }).sort({ order: -1 });
       const lastVideoOrder = lastVideo?.order || 0;
 
-      console.log({ order }, lastVideoOrder + 1);
       if (!order) {
         order = lastVideoOrder + 1;
       } else if (!Number.isInteger(order)) {
@@ -89,7 +90,6 @@ class VideoControllers {
       } else if (order > lastVideoOrder + 1) {
         order = lastVideoOrder + 1;
       } else {
-        console.log({ order }, lastVideoOrder + 1);
         await Video.updateMany(
           { sectionId, order: { $gte: order } },
           { $inc: { order: 1 } }
@@ -121,6 +121,70 @@ class VideoControllers {
     }
   };
 
+  static createYoutubeList = async (req, res) => {
+    try {
+      const data = req.body;
+      const { sectionId, courseId, playlist } = data;
+      const start = +(data.start || 1),
+        end = +data.end;
+
+      const playlistRes = await axios.get(
+        `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo&maxResults=100`,
+        {
+          headers: {
+            Authorization: "AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo",
+          },
+        }
+      );
+
+      const videoIds = [];
+      let index = start - 1;
+      while (index <= (end - 1 || playlistRes?.data?.items?.length)) {
+        console.log(playlistRes?.data?.items?.[index]);
+        if (playlistRes?.data?.items?.[index]) {
+          videoIds.push(playlistRes?.data?.items?.[index]?.contentDetails.videoId);
+        }
+        index++;
+      }
+
+      const videosRes = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoIds}&part=snippet,contentDetails&key=${YOUTUBE_API_KEY}&maxResults=50`,
+        {
+          headers: {
+            Authorization: "AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo",
+          },
+        }
+      );
+
+      const lastVideo = await Video.findOne({
+        sectionId,
+      }).sort({ order: -1 });
+
+      console.log(lastVideo.order);
+      const videos = videosRes?.data?.items
+        ?.filter(
+          (item) =>
+            item.contentDetails.duration && item.snippet.title && item.id
+        )
+        ?.map((item,index) => ({
+          order: lastVideo.order + index + 1,  
+          link: `https://www.youtube.com/embed/${item.id}`,
+          title: item.snippet.title,
+          description: item.snippet.description,
+          duration: getDuration(item.contentDetails.duration),
+          sectionId,
+          courseId,
+          type: "youtube",
+          status: 1,
+        }));
+ 
+      const video = await Video.insertMany(videos);
+ 
+       sendSucces(res, { status: 200, data: { status: "success" } });
+    } catch (error) {
+      sendError(res, { error: error.message, status: 404 });
+    }
+  };
   // Get video
   static get = async (req, res) => {
     try {

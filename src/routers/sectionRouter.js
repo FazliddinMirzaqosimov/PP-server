@@ -34,7 +34,7 @@ sectionRouter
   .post(
     routeProtector,
     allowTo("admin", "superadmin"),
-    upload("sectionPhoto", 2).single("image"),
+    upload("sectionPhoto", 20).single("image"),
     SectionControllers.uploadPhoto
   );
 

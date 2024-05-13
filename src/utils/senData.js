@@ -12,11 +12,11 @@ exports.sendError = (
 
 exports.sendSucces = (
   res,
-  { data = {}, status = 200, type = "json", ...addicionalDatas }
+  { data = {}, status = 200, type = "json", ...addisionalDatas }
 ) => {
   res
     .status(status)
     [type](
-      type === "json" ? { status: "success", data, ...addicionalDatas } : data
+      type === "json" ? { status: "success", data, ...addisionalDatas } : data
     );
 };
