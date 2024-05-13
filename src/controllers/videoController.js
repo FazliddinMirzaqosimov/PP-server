@@ -128,8 +128,8 @@ class VideoControllers {
       const { sectionId, courseId, playlist } = data;
       const start = +(data.start || 1),
         end = +data.end;
-
-        const playlistRes = await axios.get(
+      let playListItems = [];
+      const playlistRes1 = await axios.get(
         `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`,
         {
           headers: {
@@ -137,11 +137,63 @@ class VideoControllers {
           },
         }
       );
+      playListItems = playlistRes1?.data?.items
+        ? playListItems.concat(playlistRes1.data.items)
+        : playListItems;
+
+      let pageToken = playlistRes1.data.nextPageToken;
+
+      if ((start > 50 || end > 50) && playlistRes1?.data?.nextPageToken) {
+        const playlistRes2 = await axios.get(
+          `https://www.googleapis.com/youtube/v3/playlistItems?pageToken=${pageToken}&playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`,
+          {
+            headers: {
+              Authorization: "AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo",
+            },
+          }
+        );
+        pageToken = playlistRes2?.data?.nextPageToken;
+        playListItems = playlistRes2?.data?.items
+          ? playListItems.concat(playlistRes2.data.items)
+          : playListItems;
+      }
+
+      if ((start > 100 || end > 100) && pageToken) {
+        const playlistRes3 = await axios.get(
+          `https://www.googleapis.com/youtube/v3/playlistItems?pageToken=${pageToken}&playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`,
+          {
+            headers: {
+              Authorization: "AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo",
+            },
+          }
+        );
+        pageToken = playlistRes3?.data?.nextPageToken;
+
+        playListItems = playlistRes3?.data?.items ?
+        playListItems.concat(playlistRes3.data.items) : playListItems;
+      }
+
+      if ((start > 150 || end > 150) && pageToken) {
+        const playlistRes4 = await axios.get(
+          `https://www.googleapis.com/youtube/v3/playlistItems?pageToken=${pageToken}&playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`,
+          {
+            headers: {
+              Authorization: "AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo",
+            },
+          }
+        );
+        pageToken = playlistRes4?.data?.nextPageToken;
+
+        playlistRes4.data?.items &&
+          playListItems.concat(playlistRes4.data.items);
+      }
+
+ 
       const videoIds = [];
       let index = start - 1;
-      while (index <= (end - 1 || playlistRes?.data?.items?.length)) { 
-        if (playlistRes?.data?.items?.[index]) {
-          videoIds.push(playlistRes?.data?.items?.[index]?.contentDetails.videoId);
+      while (index <= (end - 1 || playListItems.length)) {
+        if (playListItems[index]) {
+          videoIds.push(playListItems[index]?.contentDetails.videoId);
         }
         index++;
       }
@@ -159,13 +211,13 @@ class VideoControllers {
         sectionId,
       }).sort({ order: -1 });
 
-       const videos = videosRes?.data?.items
+      const videos = videosRes?.data?.items
         ?.filter(
           (item) =>
             item.contentDetails.duration && item.snippet.title && item.id
         )
-        ?.map((item,index) => ({
-          order: (lastVideo?.order || 0) + index + 1,  
+        ?.map((item, index) => ({
+          order: (lastVideo?.order || 0) + index + 1,
           link: `https://www.youtube.com/embed/${item.id}`,
           title: item.snippet.title,
           description: item.snippet.description,
@@ -176,11 +228,11 @@ class VideoControllers {
           status: 1,
         }));
 
-        await Video.insertMany(videos);
- 
-       sendSucces(res, { status: 200, data: { status: "success" } });
+      await Video.insertMany(videos);
+
+      sendSucces(res, { status: 200, data: { status: "success" } });
     } catch (error) {
-      sendError(res, { error: error.message , status: 404 });
+      sendError(res, { error: error.message, status: 404 });
     }
   };
   // Get video
