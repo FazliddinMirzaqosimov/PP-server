@@ -128,20 +128,18 @@ class VideoControllers {
       const { sectionId, courseId, playlist } = data;
       const start = +(data.start || 1),
         end = +data.end;
-
+console.log(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`);
       const playlistRes = await axios.get(
-        `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo&maxResults=100`,
+        `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`,
         {
           headers: {
             Authorization: "AIzaSyC1NRRICm52D3fI8b57lSgTDigJol0-Ugo",
           },
         }
       );
-
       const videoIds = [];
       let index = start - 1;
-      while (index <= (end - 1 || playlistRes?.data?.items?.length)) {
-        console.log(playlistRes?.data?.items?.[index]);
+      while (index <= (end - 1 || playlistRes?.data?.items?.length)) { 
         if (playlistRes?.data?.items?.[index]) {
           videoIds.push(playlistRes?.data?.items?.[index]?.contentDetails.videoId);
         }
@@ -161,14 +159,13 @@ class VideoControllers {
         sectionId,
       }).sort({ order: -1 });
 
-      console.log(lastVideo.order);
-      const videos = videosRes?.data?.items
+       const videos = videosRes?.data?.items
         ?.filter(
           (item) =>
             item.contentDetails.duration && item.snippet.title && item.id
         )
         ?.map((item,index) => ({
-          order: lastVideo.order + index + 1,  
+          order: (lastVideo.order || 0) + index + 1,  
           link: `https://www.youtube.com/embed/${item.id}`,
           title: item.snippet.title,
           description: item.snippet.description,
@@ -179,11 +176,11 @@ class VideoControllers {
           status: 1,
         }));
  
-      const video = await Video.insertMany(videos);
+         await Video.insertMany(videos);
  
        sendSucces(res, { status: 200, data: { status: "success" } });
     } catch (error) {
-      sendError(res, { error: error.message, status: 404 });
+      sendError(res, { error: error , status: 404 });
     }
   };
   // Get video
