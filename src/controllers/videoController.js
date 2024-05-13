@@ -4,6 +4,7 @@ const Video = require("../models/videoModel");
 const Section = require("../models/sectionModel");
 const axios = require("axios");
 const getDuration = require("../utils/getDuration");
+const { YOUTUBE_API_KEY } = require("../shared/const");
 
 class VideoControllers {
   // Get all video
