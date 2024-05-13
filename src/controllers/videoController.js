@@ -128,8 +128,8 @@ class VideoControllers {
       const { sectionId, courseId, playlist } = data;
       const start = +(data.start || 1),
         end = +data.end;
-console.log(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`);
-      const playlistRes = await axios.get(
+
+        const playlistRes = await axios.get(
         `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist}&part=contentDetails&key=${YOUTUBE_API_KEY}&maxResults=100`,
         {
           headers: {
@@ -165,7 +165,7 @@ console.log(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${da
             item.contentDetails.duration && item.snippet.title && item.id
         )
         ?.map((item,index) => ({
-          order: (lastVideo.order || 0) + index + 1,  
+          order: (lastVideo?.order || 0) + index + 1,  
           link: `https://www.youtube.com/embed/${item.id}`,
           title: item.snippet.title,
           description: item.snippet.description,
@@ -175,12 +175,12 @@ console.log(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${da
           type: "youtube",
           status: 1,
         }));
- 
-         await Video.insertMany(videos);
+
+        await Video.insertMany(videos);
  
        sendSucces(res, { status: 200, data: { status: "success" } });
     } catch (error) {
-      sendError(res, { error: error , status: 404 });
+      sendError(res, { error: error.message , status: 404 });
     }
   };
   // Get video
